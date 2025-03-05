@@ -1,32 +1,26 @@
 import { Module } from '@nestjs/common';
-import { ConfigModule, ConfigService } from '@nestjs/config';
+import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { join } from 'path';
+import { DataSource, DataSourceOptions } from 'typeorm';
+import appConfig from './config/app.config';
+import databaseConfig from './config/database/database.config';
+import { TypeOrmConfigService } from './config/database/type-orm-config.service';
 
 @Module({
   imports: [
-    ConfigModule.forRoot(),
-    TypeOrmModule.forRootAsync({
-      imports: [ConfigModule],
-      useFactory: (configService: ConfigService) => ({
-        type: 'mysql',
-        host: configService.get('DB_HOST'),
-        port: +configService.get('DB_PORT'),
-        username: configService.get('DB_USERNAME'),
-        password: configService.get('DB_PASSWORD'),
-        database: configService.get('DB_DATABASE'),
-        entities: [join(__dirname, '**', '*.entity.{ts,js}')],
-        synchronize: false,
-        migrations: [join(__dirname, 'migrations', '*.{ts,js}')],
-        cli: {
-          migrationsDir: 'src/migrations',
-        },
-        namingStrategy:
-          new (require('typeorm-naming-strategies').SnakeNamingStrategy)(),
-      }),
-      inject: [ConfigService],
+    ConfigModule.forRoot({
+      isGlobal: true,
+      load: [databaseConfig, appConfig],
+      envFilePath: ['.env'],
     }),
-    // Other modules
+    TypeOrmModule.forRootAsync({
+      useClass: TypeOrmConfigService,
+      dataSourceFactory: async (options: DataSourceOptions) => {
+        return new DataSource(options).initialize();
+      },
+    }),
+
+    // AuthModule,
   ],
 })
 export class AppModule {}
