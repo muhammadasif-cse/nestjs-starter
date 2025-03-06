@@ -1,6 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { TypeOrmModuleOptions, TypeOrmOptionsFactory } from '@nestjs/typeorm';
+import { FileEntity } from 'src/files/infrastructure/persistence/entities/file.entity';
+import { UserEntity } from 'src/modules/users/entities/user.entity';
+import { RoleEntity } from 'src/roles/entities/role.entity';
+import { StatusEntity } from 'src/statuses/entities/status.entity';
 
 @Injectable()
 export class TypeOrmConfigService implements TypeOrmOptionsFactory {
@@ -21,28 +25,41 @@ export class TypeOrmConfigService implements TypeOrmOptionsFactory {
       synchronize: this.configService.getOrThrow('database.synchronize', {
         infer: true,
       }),
+      dropSchema: false,
+      keepConnectionAlive: true,
+      logging:
+        this.configService.get('app.nodeEnv', { infer: true }) !== 'production',
+      entities: [__dirname + '/../**/*.entity{.ts,.js}'],
+      migrations: [__dirname + '/migrations/**/*{.ts,.js}'],
+      cli: {
+        entitiesDir: 'src',
+
+        subscribersDir: 'subscriber',
+      },
+      extra: {
+        max: this.configService.get('database.maxConnections', { infer: true }),
+        ssl: this.configService.get('database.sslEnabled', { infer: true })
+          ? {
+              rejectUnauthorized: this.configService.get(
+                'database.rejectUnauthorized',
+                { infer: true },
+              ),
+              ca:
+                this.configService.get('database.ca', { infer: true }) ??
+                undefined,
+              key:
+                this.configService.get('database.key', { infer: true }) ??
+                undefined,
+              cert:
+                this.configService.get('database.cert', { infer: true }) ??
+                undefined,
+            }
+          : undefined,
+      },
     };
-
-    const sslEnabled =
-      this.configService.getOrThrow('database.sslEnabled', { infer: true }) ===
-      'true';
-
-    const sslConfig = sslEnabled
-      ? {
-          rejectUnauthorized:
-            this.configService.getOrThrow('database.rejectUnauthorized', {
-              infer: true,
-            }) === 'true',
-          ca: this.configService.getOrThrow('database.ca', { infer: true }),
-          key: this.configService.getOrThrow('database.key', { infer: true }),
-          cert: this.configService.getOrThrow('database.cert', { infer: true }),
-        }
-      : undefined;
-
     return {
       ...config,
-      entities: [__dirname + '/../**/*.entity{.ts,.js}'],
-      ssl: sslConfig,
+      entities: [UserEntity, FileEntity, RoleEntity, StatusEntity],
     } as TypeOrmModuleOptions;
   }
 }

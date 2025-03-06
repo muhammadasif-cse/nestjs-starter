@@ -1,0 +1,3 @@
+=> Run full workflow
+
+npm run build && npm run migration:generate TestMigration && npm run migration:run

@@ -57,9 +57,7 @@ async function bootstrap() {
     .setDescription(
       configService.getOrThrow('app.description', { infer: true }),
     )
-    .setVersion(configService.getOrThrow('app.version', { infer: true }))
     .addBearerAuth()
-    .addServer(configService.getOrThrow('app.apiPrefix', { infer: true }))
     .addTag('API')
     .build();
 
