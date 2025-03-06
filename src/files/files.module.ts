@@ -1,4 +1,7 @@
-import { Module } from '@nestjs/common';
+import {
+  // common
+  Module,
+} from '@nestjs/common';
 
 import { FileConfig, FileDriver } from './config/file-config.type';
 import fileConfig from './config/file.config';
@@ -13,7 +16,7 @@ const infrastructureUploaderModule =
     : FilesS3PresignedModule;
 
 @Module({
-  imports: [FilesLocalModule, infrastructureUploaderModule],
+  imports: [FilePersistenceModule, infrastructureUploaderModule],
   providers: [FilesService],
   exports: [FilesService, FilePersistenceModule],
 })

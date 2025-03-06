@@ -23,23 +23,23 @@ export class FileType {
   })
   @Transform(
     ({ value }) => {
-      if ((fileConfig() as FileConfig).driver === FileDriver.LOCAL) {
+      const config = fileConfig() as FileConfig;
+
+      if (config.driver === FileDriver.LOCAL) {
+        // For local files, prepend the backend domain
         return (appConfig() as AppConfig).backendDomain + value;
-      } else if (
-        [FileDriver.S3_PRESIGNED, FileDriver.S3].includes(
-          (fileConfig() as FileConfig).driver,
-        )
-      ) {
+      } else if (config.driver === FileDriver.S3_PRESIGNED) {
+        // For S3 presigned URLs, generate a signed URL
         const s3 = new S3Client({
-          region: (fileConfig() as FileConfig).awsS3Region ?? '',
+          region: config.awsS3Region ?? '',
           credentials: {
-            accessKeyId: (fileConfig() as FileConfig).accessKeyId ?? '',
-            secretAccessKey: (fileConfig() as FileConfig).secretAccessKey ?? '',
+            accessKeyId: config.accessKeyId ?? '',
+            secretAccessKey: config.secretAccessKey ?? '',
           },
         });
 
         const command = new GetObjectCommand({
-          Bucket: (fileConfig() as FileConfig).awsDefaultS3Bucket ?? '',
+          Bucket: config.awsDefaultS3Bucket ?? '',
           Key: value,
         });
 

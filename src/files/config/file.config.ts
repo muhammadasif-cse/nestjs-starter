@@ -1,34 +1,25 @@
 import { registerAs } from '@nestjs/config';
-
-import { IsEnum, IsString, ValidateIf } from 'class-validator';
+import { IsString, ValidateIf } from 'class-validator';
 import validateConfig from '../../utils/validate-config';
 import { FileConfig, FileDriver } from './file-config.type';
 
 class EnvironmentVariablesValidator {
-  @IsEnum(FileDriver)
-  FILE_DRIVER: FileDriver;
+  // @IsEnum(FileDriver)
+  // FILE_DRIVER: FileDriver;
 
-  @ValidateIf((envValues) =>
-    [FileDriver.S3, FileDriver.S3_PRESIGNED].includes(envValues.FILE_DRIVER),
-  )
+  @ValidateIf((envValues) => envValues.FILE_DRIVER === FileDriver.S3_PRESIGNED)
   @IsString()
   ACCESS_KEY_ID: string;
 
-  @ValidateIf((envValues) =>
-    [FileDriver.S3, FileDriver.S3_PRESIGNED].includes(envValues.FILE_DRIVER),
-  )
+  @ValidateIf((envValues) => envValues.FILE_DRIVER === FileDriver.S3_PRESIGNED)
   @IsString()
   SECRET_ACCESS_KEY: string;
 
-  @ValidateIf((envValues) =>
-    [FileDriver.S3, FileDriver.S3_PRESIGNED].includes(envValues.FILE_DRIVER),
-  )
+  @ValidateIf((envValues) => envValues.FILE_DRIVER === FileDriver.S3_PRESIGNED)
   @IsString()
   AWS_DEFAULT_S3_BUCKET: string;
 
-  @ValidateIf((envValues) =>
-    [FileDriver.S3, FileDriver.S3_PRESIGNED].includes(envValues.FILE_DRIVER),
-  )
+  @ValidateIf((envValues) => envValues.FILE_DRIVER === FileDriver.S3_PRESIGNED)
   @IsString()
   AWS_S3_REGION: string;
 }
