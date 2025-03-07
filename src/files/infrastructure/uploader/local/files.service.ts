@@ -26,13 +26,13 @@ export class FilesLocalService {
       });
     }
 
+    const apiPrefix = this.configService.get('app.apiPrefix', { infer: true });
+    const version = this.configService.get('app.version', { infer: true });
+    let filePath = file.path.startsWith('/') ? file.path.slice(1) : file.path;
+    filePath = filePath.replace(/\\/g, '/');
     return {
       file: await this.fileRepository.create({
-        path: `/${this.configService.get('app.apiPrefix', {
-          infer: true,
-        })}/${this.configService.get('app.version', {
-          infer: true,
-        })}/${file.path}`,
+        path: `/${apiPrefix}/${version}/${filePath}`,
       }),
     };
   }
