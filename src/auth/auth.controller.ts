@@ -1,4 +1,5 @@
 import { User } from '@/modules/users/domain/user';
+import { APIResponse } from '@/utils/types/api-response';
 import {
   Body,
   Controller,
@@ -39,49 +40,97 @@ export class AuthController {
   @Post('email/login')
   @ApiOkResponse({
     type: LoginResponseDto,
+    description: 'Login successful',
   })
   @HttpCode(HttpStatus.OK)
-  public login(@Body() loginDto: AuthEmailLoginDto): Promise<LoginResponseDto> {
-    return this.service.validateLogin(loginDto);
+  public async login(
+    @Body() loginDto: AuthEmailLoginDto,
+  ): Promise<APIResponse<LoginResponseDto>> {
+    const data = await this.service.validateLogin(loginDto);
+    return {
+      message: 'Login successful',
+      statusCode: HttpStatus.OK,
+      data,
+    };
   }
 
   @Post('email/register')
-  @HttpCode(HttpStatus.NO_CONTENT)
-  async register(@Body() createUserDto: AuthRegisterLoginDto): Promise<void> {
-    return this.service.register(createUserDto);
+  @ApiOkResponse({
+    description: 'Registration successful',
+  })
+  @HttpCode(HttpStatus.CREATED)
+  public async register(
+    @Body() createUserDto: AuthRegisterLoginDto,
+  ): Promise<APIResponse<User>> {
+    const user = await this.service.register(createUserDto);
+    return {
+      message: 'Registration successful',
+      statusCode: HttpStatus.CREATED,
+      data: user,
+    };
   }
 
   @Post('email/confirm')
+  @ApiOkResponse({
+    description: 'Email confirmation successful',
+  })
   @HttpCode(HttpStatus.NO_CONTENT)
-  async confirmEmail(
+  public async confirmEmail(
     @Body() confirmEmailDto: AuthConfirmEmailDto,
-  ): Promise<void> {
-    return this.service.confirmEmail(confirmEmailDto.hash);
+  ): Promise<APIResponse<void>> {
+    await this.service.confirmEmail(confirmEmailDto.hash);
+    return {
+      message: 'Email confirmed successfully',
+      statusCode: HttpStatus.NO_CONTENT,
+    };
   }
 
   @Post('email/confirm/new')
+  @ApiOkResponse({
+    description: 'New email confirmation successful',
+  })
   @HttpCode(HttpStatus.NO_CONTENT)
-  async confirmNewEmail(
+  public async confirmNewEmail(
     @Body() confirmEmailDto: AuthConfirmEmailDto,
-  ): Promise<void> {
-    return this.service.confirmNewEmail(confirmEmailDto.hash);
+  ): Promise<APIResponse<void>> {
+    await this.service.confirmNewEmail(confirmEmailDto.hash);
+    return {
+      message: 'New email confirmed successfully',
+      statusCode: HttpStatus.NO_CONTENT,
+    };
   }
 
   @Post('forgot/password')
+  @ApiOkResponse({
+    description: 'Password reset email sent',
+  })
   @HttpCode(HttpStatus.NO_CONTENT)
-  async forgotPassword(
+  public async forgotPassword(
     @Body() forgotPasswordDto: AuthForgotPasswordDto,
-  ): Promise<void> {
-    return this.service.forgotPassword(forgotPasswordDto.email);
+  ): Promise<APIResponse<void>> {
+    await this.service.forgotPassword(forgotPasswordDto.email);
+    return {
+      message: 'Password reset email sent successfully',
+      statusCode: HttpStatus.NO_CONTENT,
+    };
   }
 
   @Post('reset/password')
+  @ApiOkResponse({
+    description: 'Password reset successful',
+  })
   @HttpCode(HttpStatus.NO_CONTENT)
-  resetPassword(@Body() resetPasswordDto: AuthResetPasswordDto): Promise<void> {
-    return this.service.resetPassword(
+  public async resetPassword(
+    @Body() resetPasswordDto: AuthResetPasswordDto,
+  ): Promise<APIResponse<void>> {
+    await this.service.resetPassword(
       resetPasswordDto.hash,
       resetPasswordDto.password,
     );
+    return {
+      message: 'Password reset successfully',
+      statusCode: HttpStatus.NO_CONTENT,
+    };
   }
 
   @ApiBearerAuth()
@@ -92,15 +141,24 @@ export class AuthController {
   @UseGuards(AuthGuard('jwt'))
   @ApiOkResponse({
     type: User,
+    description: 'User details retrieved successfully',
   })
   @HttpCode(HttpStatus.OK)
-  public me(@Request() request): Promise<NullableType<User>> {
-    return this.service.me(request.user);
+  public async me(
+    @Request() request,
+  ): Promise<APIResponse<NullableType<User>>> {
+    const user = await this.service.me(request.user);
+    return {
+      message: 'User details retrieved successfully',
+      statusCode: HttpStatus.OK,
+      data: user,
+    };
   }
 
   @ApiBearerAuth()
   @ApiOkResponse({
     type: RefreshResponseDto,
+    description: 'Token refreshed successfully',
   })
   @SerializeOptions({
     groups: ['me'],
@@ -108,21 +166,35 @@ export class AuthController {
   @Post('refresh')
   @UseGuards(AuthGuard('jwt-refresh'))
   @HttpCode(HttpStatus.OK)
-  public refresh(@Request() request): Promise<RefreshResponseDto> {
-    return this.service.refreshToken({
+  public async refresh(
+    @Request() request,
+  ): Promise<APIResponse<RefreshResponseDto>> {
+    const data = await this.service.refreshToken({
       sessionId: request.user.sessionId,
       hash: request.user.hash,
     });
+    return {
+      message: 'Token refreshed successfully',
+      statusCode: HttpStatus.OK,
+      data,
+    };
   }
 
   @ApiBearerAuth()
+  @ApiOkResponse({
+    description: 'Logout successful',
+  })
   @Post('logout')
   @UseGuards(AuthGuard('jwt'))
   @HttpCode(HttpStatus.NO_CONTENT)
-  public async logout(@Request() request): Promise<void> {
+  public async logout(@Request() request): Promise<APIResponse<void>> {
     await this.service.logout({
       sessionId: request.user.sessionId,
     });
+    return {
+      message: 'Logout successful',
+      statusCode: HttpStatus.NO_CONTENT,
+    };
   }
 
   @ApiBearerAuth()
@@ -134,19 +206,32 @@ export class AuthController {
   @HttpCode(HttpStatus.OK)
   @ApiOkResponse({
     type: User,
+    description: 'User details updated successfully',
   })
-  public update(
+  public async update(
     @Request() request,
     @Body() userDto: AuthUpdateDto,
-  ): Promise<NullableType<User>> {
-    return this.service.update(request.user, userDto);
+  ): Promise<APIResponse<NullableType<User>>> {
+    const user = await this.service.update(request.user, userDto);
+    return {
+      message: 'User details updated successfully',
+      statusCode: HttpStatus.OK,
+      data: user,
+    };
   }
 
   @ApiBearerAuth()
+  @ApiOkResponse({
+    description: 'User account deleted successfully',
+  })
   @Delete('me')
   @UseGuards(AuthGuard('jwt'))
   @HttpCode(HttpStatus.NO_CONTENT)
-  public async delete(@Request() request): Promise<void> {
-    return this.service.softDelete(request.user);
+  public async delete(@Request() request): Promise<APIResponse<void>> {
+    await this.service.softDelete(request.user);
+    return {
+      message: 'User account deleted successfully',
+      statusCode: HttpStatus.NO_CONTENT,
+    };
   }
 }
