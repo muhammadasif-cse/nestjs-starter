@@ -1,0 +1,9 @@
+USE fayrashop;
+
+INSERT INTO `role` (`id`, `name`) VALUES 
+(1, 'admin'),
+(2, 'staff'),
+(3, 'moderator'),
+(4, 'manager'),
+(5, 'maintainer'),
+(6, 'user');

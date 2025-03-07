@@ -15,7 +15,7 @@ module.exports = new DataSource({
   password: process.env.DATABASE_PASSWORD,
   database: process.env.DATABASE_NAME,
   entities: [path.join(__dirname, 'src/**/*.entity{.ts,.js}')],
-  migrations: [path.join(__dirname, 'src/migrations/*{.ts,.js}')],
+  migrations: [path.join(__dirname, 'src/database/migrations/*{.ts,.js}')],
   synchronize: process.env.NODE_ENV === 'development',
   logging: true,
   migrationsRun: false,

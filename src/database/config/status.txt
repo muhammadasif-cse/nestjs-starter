@@ -1,0 +1,8 @@
+USE fayrashop;
+
+INSERT INTO `status` (`id`, `name`) VALUES
+(1, 'active'),
+(2, 'inactive'),
+(3, 'pending'),
+(4, 'banned'),
+(5, 'restricted');

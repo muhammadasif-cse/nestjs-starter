@@ -1,6 +1,7 @@
 import { FileEntity } from '@/files/infrastructure/persistence/entities/file.entity';
 import { UserEntity } from '@/modules/users/entities/user.entity';
 import { RoleEntity } from '@/roles/entities/role.entity';
+import { SessionEntity } from '@/session/entities/session.entity';
 import { StatusEntity } from '@/statuses/entities/status.entity';
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
@@ -59,7 +60,13 @@ export class TypeOrmConfigService implements TypeOrmOptionsFactory {
     };
     return {
       ...config,
-      entities: [UserEntity, FileEntity, RoleEntity, StatusEntity],
+      entities: [
+        UserEntity,
+        FileEntity,
+        RoleEntity,
+        StatusEntity,
+        SessionEntity,
+      ],
     } as TypeOrmModuleOptions;
   }
 }

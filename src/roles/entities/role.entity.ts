@@ -1,13 +1,13 @@
 import { EntityRelationalHelper } from '@/utils/entity-helper';
-import { Column, Entity, PrimaryColumn } from 'typeorm';
+import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity({
   name: 'role',
 })
 export class RoleEntity extends EntityRelationalHelper {
-  @PrimaryColumn()
+  @PrimaryGeneratedColumn()
   id: number;
 
-  @Column()
+  @Column({ nullable: true })
   name?: string;
 }
