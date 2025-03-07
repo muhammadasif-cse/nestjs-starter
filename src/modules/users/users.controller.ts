@@ -212,14 +212,14 @@ export class UsersController {
   }
 
   @Delete(':id')
-  @HttpCode(HttpStatus.NO_CONTENT)
+  @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Delete a user by ID' })
   @SwaggerApiResponse({
-    status: 204,
+    status: 200,
     description: 'User deleted successfully',
     schema: {
       example: {
-        statusCode: 204,
+        statusCode: 200,
         message: 'User deleted successfully',
       },
     },
@@ -231,7 +231,7 @@ export class UsersController {
   async remove(@Param('id') id: string): Promise<APIResponse<void>> {
     await this.usersService.remove(id);
     return {
-      statusCode: HttpStatus.NO_CONTENT,
+      statusCode: HttpStatus.OK,
       message: 'User deleted successfully',
     };
   }
