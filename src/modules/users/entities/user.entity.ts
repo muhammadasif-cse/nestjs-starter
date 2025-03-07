@@ -2,7 +2,7 @@ import { AuthProvidersEnum } from '@/auth/auth-providers.enum';
 import { FileEntity } from '@/files/infrastructure/persistence/entities/file.entity';
 import { RoleEntity } from '@/roles/entities/role.entity';
 import { StatusEntity } from '@/statuses/entities/status.entity';
-import { EntityRelationalHelper } from '@/utils/entity-helper';
+import { EntityHelper } from '@/utils/entity-helper';
 import {
   Column,
   CreateDateColumn,
@@ -19,7 +19,7 @@ import {
 @Entity({
   name: 'user',
 })
-export class UserEntity extends EntityRelationalHelper {
+export class UserEntity extends EntityHelper {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 

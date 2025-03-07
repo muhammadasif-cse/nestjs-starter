@@ -1,8 +1,8 @@
-import { EntityRelationalHelper } from '@/utils/entity-helper';
+import { EntityHelper } from '@/utils/entity-helper';
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity({ name: 'file' })
-export class FileEntity extends EntityRelationalHelper {
+export class FileEntity extends EntityHelper {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 

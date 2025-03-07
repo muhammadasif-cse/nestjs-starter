@@ -1,5 +1,5 @@
 import { UserEntity } from '@/modules/users/entities/user.entity';
-import { EntityRelationalHelper } from '@/utils/entity-helper';
+import { EntityHelper } from '@/utils/entity-helper';
 import {
   Column,
   CreateDateColumn,
@@ -14,7 +14,7 @@ import {
 @Entity({
   name: 'session',
 })
-export class SessionEntity extends EntityRelationalHelper {
+export class SessionEntity extends EntityHelper {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 

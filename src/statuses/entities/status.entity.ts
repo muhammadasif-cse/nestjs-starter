@@ -1,10 +1,10 @@
-import { EntityRelationalHelper } from '@/utils/entity-helper';
+import { EntityHelper } from '@/utils/entity-helper';
 import { Column, Entity, PrimaryColumn } from 'typeorm';
 
 @Entity({
   name: 'status',
 })
-export class StatusEntity extends EntityRelationalHelper {
+export class StatusEntity extends EntityHelper {
   @PrimaryColumn()
   id: number;
 
