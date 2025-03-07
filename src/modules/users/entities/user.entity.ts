@@ -16,9 +16,7 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
-@Entity({
-  name: 'user',
-})
+@Entity({ name: 'user' })
 export class UserEntity extends EntityHelper {
   @PrimaryGeneratedColumn('uuid')
   id: string;
@@ -44,20 +42,14 @@ export class UserEntity extends EntityHelper {
   @Column({ type: String, nullable: true })
   lastName: string | null;
 
-  @OneToOne(() => FileEntity, {
-    eager: true,
-  })
+  @OneToOne(() => FileEntity, { eager: true })
   @JoinColumn()
   photo?: FileEntity | null;
 
-  @ManyToOne(() => RoleEntity, {
-    eager: true,
-  })
+  @ManyToOne(() => RoleEntity, { eager: true })
   role?: RoleEntity | null;
 
-  @ManyToOne(() => StatusEntity, {
-    eager: true,
-  })
+  @ManyToOne(() => StatusEntity, { eager: true })
   status?: StatusEntity | null;
 
   @CreateDateColumn()
@@ -67,5 +59,5 @@ export class UserEntity extends EntityHelper {
   updatedAt: Date;
 
   @DeleteDateColumn()
-  deletedAt: Date;
+  deletedAt: Date | null;
 }

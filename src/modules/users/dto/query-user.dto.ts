@@ -1,61 +1,65 @@
-import { RoleDto } from '@/roles/dto/role.dto';
-import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { Transform, Type, plainToInstance } from 'class-transformer';
-import {
-  IsNumber,
-  IsOptional,
-  IsString,
-  ValidateNested,
-} from 'class-validator';
-import { User } from '../domain/user';
+import { ApiPropertyOptional } from '@nestjs/swagger';
+import { Transform, Type } from 'class-transformer';
+import { IsArray, IsNumber, IsOptional, IsString } from 'class-validator';
 
 export class FilterUserDto {
-  @ApiPropertyOptional({ type: RoleDto })
+  @ApiPropertyOptional({ type: [Number], example: [6] })
+  @IsArray()
+  @IsNumber({}, { each: true })
+  @Transform(
+    ({ value }) => {
+      if (Array.isArray(value)) return value.map(Number);
+      return [Number(value)];
+    },
+    { toClassOnly: true },
+  )
   @IsOptional()
-  @ValidateNested({ each: true })
-  @Type(() => RoleDto)
-  roles?: RoleDto[] | null;
+  roleIds?: number[];
+
+  @ApiPropertyOptional({ type: [Number], example: [2] })
+  @IsArray()
+  @IsNumber({}, { each: true })
+  @Transform(
+    ({ value }) => (Array.isArray(value) ? value.map(Number) : [Number(value)]),
+    { toClassOnly: true },
+  )
+  @IsOptional()
+  statusIds?: number[];
+
+  @ApiPropertyOptional({ type: String, example: 'Muhammad' })
+  @IsString()
+  @IsOptional()
+  search?: string;
 }
 
 export class SortUserDto {
-  @ApiProperty()
-  @Type(() => String)
-  @IsString()
-  orderBy: keyof User;
+  @ApiPropertyOptional({ type: String, example: 'firstName' })
+  orderBy: string;
 
-  @ApiProperty()
-  @IsString()
-  order: string;
+  @ApiPropertyOptional({ enum: ['ASC', 'DESC'], example: 'ASC' })
+  order: 'ASC' | 'DESC';
 }
 
 export class QueryUserDto {
-  @ApiPropertyOptional()
-  @Transform(({ value }) => (value ? Number(value) : 1))
+  @ApiPropertyOptional({ type: () => FilterUserDto })
+  @Type(() => FilterUserDto)
+  @IsOptional()
+  filters?: FilterUserDto;
+
+  @ApiPropertyOptional({ type: () => [SortUserDto] })
+  @Type(() => SortUserDto)
+  @IsOptional()
+  sort?: SortUserDto[];
+
+  @ApiPropertyOptional({ type: Number, example: 1 })
   @IsNumber()
   @IsOptional()
+  @Type(() => Number)
   page?: number;
 
-  @ApiPropertyOptional()
-  @Transform(({ value }) => (value ? Number(value) : 10))
+  @ApiPropertyOptional({ type: Number, example: 10 })
   @IsNumber()
   @IsOptional()
+  @Type(() => Number)
   limit?: number;
-
-  @ApiPropertyOptional({ type: String })
-  @IsOptional()
-  @Transform(({ value }) =>
-    value ? plainToInstance(FilterUserDto, JSON.parse(value)) : undefined,
-  )
-  @ValidateNested()
-  @Type(() => FilterUserDto)
-  filters?: FilterUserDto | null;
-
-  @ApiPropertyOptional({ type: String })
-  @IsOptional()
-  @Transform(({ value }) => {
-    return value ? plainToInstance(SortUserDto, JSON.parse(value)) : undefined;
-  })
-  @ValidateNested({ each: true })
-  @Type(() => SortUserDto)
-  sort?: SortUserDto[] | null;
 }

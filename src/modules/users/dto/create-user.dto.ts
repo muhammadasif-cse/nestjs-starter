@@ -7,7 +7,7 @@ import { Transform, Type } from 'class-transformer';
 import { IsEmail, IsNotEmpty, IsOptional, MinLength } from 'class-validator';
 
 export class CreateUserDto {
-  @ApiProperty({ example: 'asif@example.com', type: String })
+  @ApiProperty({ example: 'test1@example.com', type: String })
   @Transform(lowerCaseTransformer)
   @IsNotEmpty()
   @IsEmail()
@@ -21,11 +21,11 @@ export class CreateUserDto {
 
   socialId?: string | null;
 
-  @ApiProperty({ example: 'Muhammad', type: String })
+  @ApiProperty({ example: 'John', type: String })
   @IsNotEmpty()
   firstName: string | null;
 
-  @ApiProperty({ example: 'Asif', type: String })
+  @ApiProperty({ example: 'Doe', type: String })
   @IsNotEmpty()
   lastName: string | null;
 
@@ -41,5 +41,5 @@ export class CreateUserDto {
   @ApiPropertyOptional({ type: StatusDto })
   @IsOptional()
   @Type(() => StatusDto)
-  status?: StatusDto | null;
+  status?: StatusDto;
 }

@@ -1,4 +1,3 @@
-import { FileEntity } from '@/files/infrastructure/persistence/entities/file.entity';
 import { FileMapper } from '@/files/infrastructure/persistence/mappers/file.mapper';
 import { RoleEntity } from '@/roles/entities/role.entity';
 import { StatusEntity } from '@/statuses/entities/status.entity';
@@ -6,67 +5,45 @@ import { User } from '../domain/user';
 import { UserEntity } from '../entities/user.entity';
 
 export class UserMapper {
-  static toDomain(raw: UserEntity): User {
-    const domainEntity = new User();
-    domainEntity.id = raw.id;
-    domainEntity.email = raw.email;
-    domainEntity.password = raw.password;
-    domainEntity.provider = raw.provider;
-    domainEntity.socialId = raw.socialId;
-    domainEntity.firstName = raw.firstName;
-    domainEntity.lastName = raw.lastName;
-    if (raw.photo) {
-      domainEntity.photo = FileMapper.toDomain(raw.photo);
-    }
-    domainEntity.role = raw.role;
-    domainEntity.status = raw.status ? raw.status : undefined;
-    domainEntity.createdAt = raw.createdAt;
-    domainEntity.updatedAt = raw.updatedAt;
-    domainEntity.deletedAt = raw.deletedAt;
-    return domainEntity;
+  static toDomain(entity: UserEntity): User {
+    const domain = new User();
+    domain.id = entity.id;
+    domain.email = entity.email;
+    domain.password = entity.password;
+    domain.provider = entity.provider;
+    domain.socialId = entity.socialId;
+    domain.firstName = entity.firstName;
+    domain.lastName = entity.lastName;
+    domain.photo = entity.photo ? FileMapper.toDomain(entity.photo) : null;
+    domain.role = entity.role ? ({ id: entity.role.id } as any) : undefined;
+    domain.status = entity.status
+      ? ({ id: entity.status.id } as any)
+      : undefined;
+    domain.createdAt = entity.createdAt;
+    domain.updatedAt = entity.updatedAt;
+    domain.deletedAt = entity.deletedAt;
+    return domain;
   }
 
-  static toPersistence(domainEntity: User): UserEntity {
-    let role: RoleEntity | undefined = undefined;
-
-    if (domainEntity.role) {
-      role = new RoleEntity();
-      role.id = Number(domainEntity.role.id);
-    }
-
-    let photo: FileEntity | undefined | null = undefined;
-
-    if (domainEntity.photo) {
-      photo = new FileEntity();
-      photo.id = domainEntity.photo.id;
-      photo.path = domainEntity.photo.path;
-    } else if (domainEntity.photo === null) {
-      photo = null;
-    }
-
-    let status: StatusEntity | undefined = undefined;
-
-    if (domainEntity.status) {
-      status = new StatusEntity();
-      status.id = Number(domainEntity.status.id);
-    }
-
-    const persistenceEntity = new UserEntity();
-    if (domainEntity.id && typeof domainEntity.id === 'number') {
-      persistenceEntity.id = domainEntity.id;
-    }
-    persistenceEntity.email = domainEntity.email;
-    persistenceEntity.password = domainEntity.password;
-    persistenceEntity.provider = domainEntity.provider;
-    persistenceEntity.socialId = domainEntity.socialId;
-    persistenceEntity.firstName = domainEntity.firstName;
-    persistenceEntity.lastName = domainEntity.lastName;
-    persistenceEntity.photo = photo;
-    persistenceEntity.role = role;
-    persistenceEntity.status = status;
-    persistenceEntity.createdAt = domainEntity.createdAt;
-    persistenceEntity.updatedAt = domainEntity.updatedAt;
-    persistenceEntity.deletedAt = domainEntity.deletedAt;
-    return persistenceEntity;
+  static toPersistence(domain: User): UserEntity {
+    const entity = new UserEntity();
+    entity.id = domain.id;
+    entity.email = domain.email;
+    entity.password = domain.password;
+    entity.provider = domain.provider;
+    entity.socialId = domain.socialId;
+    entity.firstName = domain.firstName;
+    entity.lastName = domain.lastName;
+    entity.photo = domain.photo ? FileMapper.toPersistence(domain.photo) : null;
+    entity.role = domain.role
+      ? Object.assign(new RoleEntity(), { id: domain.role.id })
+      : null;
+    entity.status = domain.status
+      ? Object.assign(new StatusEntity(), { id: domain.status.id })
+      : null;
+    entity.createdAt = domain.createdAt;
+    entity.updatedAt = domain.updatedAt;
+    entity.deletedAt = domain.deletedAt ?? null;
+    return entity;
   }
 }

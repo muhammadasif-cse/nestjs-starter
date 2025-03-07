@@ -132,7 +132,10 @@ export class AuthService {
       if (socialEmail && !userByEmail) {
         user.email = socialEmail;
       }
-      await this.usersService.update(user.id, user);
+      await this.usersService.update(user.id, {
+        ...user,
+        status: user.status ? { id: user.status.id } : undefined,
+      });
     } else if (userByEmail) {
       user = userByEmail;
     } else if (socialData.id) {
@@ -266,7 +269,10 @@ export class AuthService {
       id: StatusEnum.active,
     };
 
-    await this.usersService.update(user.id, user);
+    await this.usersService.update(user.id, {
+      ...user,
+      status: user.status ? { id: user.status.id } : undefined,
+    });
   }
 
   async confirmNewEmail(hash: string): Promise<void> {
@@ -308,7 +314,10 @@ export class AuthService {
       id: StatusEnum.active,
     };
 
-    await this.usersService.update(user.id, user);
+    await this.usersService.update(user.id, {
+      ...user,
+      status: user.status ? { id: user.status.id } : undefined,
+    });
   }
 
   async forgotPassword(email: string): Promise<void> {
@@ -389,7 +398,10 @@ export class AuthService {
       userId: user.id,
     });
 
-    await this.usersService.update(user.id, user);
+    await this.usersService.update(user.id, {
+      ...user,
+      status: user.status ? { id: user.status.id } : undefined,
+    });
   }
 
   async me(userJwtPayload: JwtPayloadType): Promise<NullableType<User>> {
