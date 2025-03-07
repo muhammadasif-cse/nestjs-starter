@@ -1,5 +1,4 @@
 1. Generate migration:
-    * pnpm run migration:generate --name=CreateTable
     * pnpm run migration:generate -- -n CreateUserTable
 
 2. Run migrations:
