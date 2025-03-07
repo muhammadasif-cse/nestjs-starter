@@ -1,5 +1,4 @@
-import { UserEntity } from 'src/modules/users/entities/user.entity';
-import { EntityRelationalHelper } from 'src/utils/entity-helper';
+import { EntityRelationalHelper } from '@/utils/entity-helper';
 import {
   Column,
   CreateDateColumn,
@@ -10,6 +9,7 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import { UserEntity } from '../../modules/users/entities/user.entity';
 
 @Entity({
   name: 'session',

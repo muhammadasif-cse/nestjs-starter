@@ -1,7 +1,7 @@
+import { User } from '@/modules/users/domain/user';
+import { NullableType } from '@/utils/types/nullable.type';
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { User } from 'src/modules/users/domain/user';
-import { NullableType } from 'src/utils/types/nullable.type';
 import { Not, Repository } from 'typeorm';
 import { Session } from '../domain/session';
 import { SessionEntity } from '../entities/session.entity';

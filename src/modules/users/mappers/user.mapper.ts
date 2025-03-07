@@ -1,7 +1,7 @@
-import { FileEntity } from 'src/files/infrastructure/persistence/entities/file.entity';
-import { FileMapper } from 'src/files/infrastructure/persistence/mappers/file.mapper';
-import { RoleEntity } from 'src/roles/entities/role.entity';
-import { StatusEntity } from 'src/statuses/entities/status.entity';
+import { FileEntity } from '@/files/infrastructure/persistence/entities/file.entity';
+import { FileMapper } from '@/files/infrastructure/persistence/mappers/file.mapper';
+import { RoleEntity } from '@/roles/entities/role.entity';
+import { StatusEntity } from '@/statuses/entities/status.entity';
 import { User } from '../domain/user';
 import { UserEntity } from '../entities/user.entity';
 

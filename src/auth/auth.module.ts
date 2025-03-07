@@ -1,9 +1,9 @@
+import { MailModule } from '@/mail/mail.module';
+import { UsersModule } from '@/modules/users/users.module';
+import { SessionModule } from '@/session/session.module';
 import { Module } from '@nestjs/common';
 import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
-import { MailModule } from 'src/mail/mail.module';
-import { UsersModule } from 'src/modules/users/users.module';
-import { SessionModule } from 'src/session/session.module';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
 import { AnonymousStrategy } from './strategies/anonymous.strategy';

@@ -1,5 +1,5 @@
-import { UserEntity } from 'src/modules/users/entities/user.entity';
-import { UserMapper } from 'src/modules/users/mappers/user.mapper';
+import { UserEntity } from '@/modules/users/entities/user.entity';
+import { UserMapper } from '@/modules/users/mappers/user.mapper';
 import { Session } from '../domain/session';
 import { SessionEntity } from '../entities/session.entity';
 

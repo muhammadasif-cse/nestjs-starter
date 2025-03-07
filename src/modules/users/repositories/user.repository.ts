@@ -3,8 +3,8 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { FindOptionsWhere, In, Repository } from 'typeorm';
 
-import { NullableType } from 'src/utils/types/nullable.type';
-import { IPaginationOptions } from 'src/utils/types/pagination-options';
+import { NullableType } from '@/utils/types/nullable.type';
+import { IPaginationOptions } from '@/utils/types/pagination-options';
 import { User } from '../domain/user';
 import { FilterUserDto, SortUserDto } from '../dto/query-user.dto';
 import { UserEntity } from '../entities/user.entity';

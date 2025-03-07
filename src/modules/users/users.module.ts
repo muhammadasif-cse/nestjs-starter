@@ -1,6 +1,6 @@
+import { FilesModule } from '@/files/files.module';
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { FilesModule } from 'src/files/files.module';
 import { UserEntity } from './entities/user.entity';
 import { UserPersistenceModule } from './persistence.module';
 import { UsersController } from './users.controller';

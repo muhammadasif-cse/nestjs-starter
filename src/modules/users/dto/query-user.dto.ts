@@ -1,3 +1,4 @@
+import { RoleDto } from '@/roles/dto/role.dto';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { Transform, Type, plainToInstance } from 'class-transformer';
 import {
@@ -6,7 +7,6 @@ import {
   IsString,
   ValidateNested,
 } from 'class-validator';
-import { RoleDto } from 'src/roles/dto/role.dto';
 import { User } from '../domain/user';
 
 export class FilterUserDto {

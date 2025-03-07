@@ -66,4 +66,6 @@ async function bootstrap() {
 
   await app.listen(configService.getOrThrow('app.port', { infer: true }));
 }
-bootstrap();
+bootstrap().catch((error) => {
+  console.error('Error during bootstrap:', error);
+});

@@ -1,10 +1,10 @@
+import { FileEntity } from '@/files/infrastructure/persistence/entities/file.entity';
+import { UserEntity } from '@/modules/users/entities/user.entity';
+import { RoleEntity } from '@/roles/entities/role.entity';
+import { StatusEntity } from '@/statuses/entities/status.entity';
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { TypeOrmModuleOptions, TypeOrmOptionsFactory } from '@nestjs/typeorm';
-import { FileEntity } from 'src/files/infrastructure/persistence/entities/file.entity';
-import { UserEntity } from 'src/modules/users/entities/user.entity';
-import { RoleEntity } from 'src/roles/entities/role.entity';
-import { StatusEntity } from 'src/statuses/entities/status.entity';
 
 @Injectable()
 export class TypeOrmConfigService implements TypeOrmOptionsFactory {

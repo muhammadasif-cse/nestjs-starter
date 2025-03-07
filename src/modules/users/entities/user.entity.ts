@@ -1,8 +1,8 @@
-import { AuthProvidersEnum } from 'src/auth/auth-providers.enum';
-import { FileEntity } from 'src/files/infrastructure/persistence/entities/file.entity';
-import { RoleEntity } from 'src/roles/entities/role.entity';
-import { StatusEntity } from 'src/statuses/entities/status.entity';
-import { EntityRelationalHelper } from 'src/utils/entity-helper';
+import { AuthProvidersEnum } from '@/auth/auth-providers.enum';
+import { FileEntity } from '@/files/infrastructure/persistence/entities/file.entity';
+import { RoleEntity } from '@/roles/entities/role.entity';
+import { StatusEntity } from '@/statuses/entities/status.entity';
+import { EntityRelationalHelper } from '@/utils/entity-helper';
 import {
   Column,
   CreateDateColumn,

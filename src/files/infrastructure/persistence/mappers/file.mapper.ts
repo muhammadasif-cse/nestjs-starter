@@ -1,4 +1,4 @@
-import { FileType } from 'src/files/domain/file';
+import { FileType } from '@/files/domain/file';
 import { FileEntity } from '../entities/file.entity';
 
 export class FileMapper {

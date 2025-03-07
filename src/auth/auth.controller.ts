@@ -1,3 +1,4 @@
+import { User } from '@/modules/users/domain/user';
 import {
   Body,
   Controller,
@@ -13,7 +14,6 @@ import {
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { ApiBearerAuth, ApiOkResponse, ApiTags } from '@nestjs/swagger';
-import { User } from 'src/modules/users/domain/user';
 import { NullableType } from '../utils/types/nullable.type';
 import { AuthService } from './auth.service';
 import { AuthConfirmEmailDto } from './dto/auth-confirm-email.dto';

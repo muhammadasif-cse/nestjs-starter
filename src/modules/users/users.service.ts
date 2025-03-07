@@ -1,18 +1,18 @@
+import { AuthProvidersEnum } from '@/auth/auth-providers.enum';
+import { FileType } from '@/files/domain/file';
+import { FilesService } from '@/files/files.service';
+import { Role } from '@/roles/domain/role';
+import { RoleEnum } from '@/roles/roles.enum';
+import { Status } from '@/statuses/domain/status';
+import { StatusEnum } from '@/statuses/statuses.enum';
+import { NullableType } from '@/utils/types/nullable.type';
+import { IPaginationOptions } from '@/utils/types/pagination-options';
 import {
   HttpStatus,
   Injectable,
   UnprocessableEntityException,
 } from '@nestjs/common';
 import bcrypt from 'bcryptjs';
-import { AuthProvidersEnum } from 'src/auth/auth-providers.enum';
-import { FileType } from 'src/files/domain/file';
-import { FilesService } from 'src/files/files.service';
-import { Role } from 'src/roles/domain/role';
-import { RoleEnum } from 'src/roles/roles.enum';
-import { Status } from 'src/statuses/domain/status';
-import { StatusEnum } from 'src/statuses/statuses.enum';
-import { NullableType } from 'src/utils/types/nullable.type';
-import { IPaginationOptions } from 'src/utils/types/pagination-options';
 import { User } from './domain/user';
 import { CreateUserDto } from './dto/create-user.dto';
 import { FilterUserDto, SortUserDto } from './dto/query-user.dto';

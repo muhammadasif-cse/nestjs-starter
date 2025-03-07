@@ -11,11 +11,12 @@ import { JwtService } from '@nestjs/jwt';
 import bcrypt from 'bcryptjs';
 import crypto from 'crypto';
 import ms from 'ms';
-import { MailService } from 'src/mail/mail.service';
-import { User } from 'src/modules/users/domain/user';
-import { UsersService } from 'src/modules/users/users.service';
-import { SessionService } from 'src/session/session.service';
-import { SocialInterface } from 'src/social/interfaces/social.interface';
+
+import { MailService } from '@/mail/mail.service';
+import { User } from '@/modules/users/domain/user';
+import { UsersService } from '@/modules/users/users.service';
+import { SessionService } from '@/session/session.service';
+import { SocialInterface } from '@/social/interfaces/social.interface';
 import { AllConfigType } from '../config/config.type';
 import { RoleEnum } from '../roles/roles.enum';
 import { Session } from '../session/domain/session';

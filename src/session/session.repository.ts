@@ -1,5 +1,5 @@
-import { User } from 'src/modules/users/domain/user';
-import { NullableType } from 'src/utils/types/nullable.type';
+import { User } from '@/modules/users/domain/user';
+import { NullableType } from '@/utils/types/nullable.type';
 import { Session } from './domain/session';
 
 export abstract class SessionRepository {

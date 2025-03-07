@@ -1,4 +1,4 @@
-import { EntityRelationalHelper } from 'src/utils/entity-helper';
+import { EntityRelationalHelper } from '@/utils/entity-helper';
 import { Column, Entity, PrimaryColumn } from 'typeorm';
 
 @Entity({

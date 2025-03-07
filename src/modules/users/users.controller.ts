@@ -23,15 +23,15 @@ import {
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 
-import { Roles } from 'src/roles/roles.decorator';
-import { RoleEnum } from 'src/roles/roles.enum';
-import { RolesGuard } from 'src/roles/roles.guard';
+import { Roles } from '@/roles/roles.decorator';
+import { RoleEnum } from '@/roles/roles.enum';
+import { RolesGuard } from '@/roles/roles.guard';
 import {
   InfinityPaginationResponse,
   InfinityPaginationResponseDto,
-} from 'src/utils/dto/infinity-pagination-response.dto';
-import { infinityPagination } from 'src/utils/infinity-pagination';
-import { NullableType } from 'src/utils/types/nullable.type';
+} from '@/utils/dto/infinity-pagination-response.dto';
+import { infinityPagination } from '@/utils/infinity-pagination';
+import { NullableType } from '@/utils/types/nullable.type';
 import { User } from './domain/user';
 import { QueryUserDto } from './dto/query-user.dto';
 import { UsersService } from './users.service';
