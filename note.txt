@@ -1,0 +1,25 @@
+1. Generate migration:
+    * pnpm run migration:generate -- -n CreateUserTable
+
+2. Run migrations:
+    * pnpm run migration:run
+
+3. Revert last migration:
+    * pnpm run migration:revert
+
+4. Start development:
+    * pnpm run start:dev
+
+5. Start production:
+    * pnpm run build
+    * pnpm run start:prod
+
+
+Batter Comments:
+
+methods:
+
+1. * import information is highlighted.
+2. ! Deprecated method, do not use.
+3. ? Should this method be exposed in the public API?
+4. TODO: Refactor this method so that it conforms to the API.
