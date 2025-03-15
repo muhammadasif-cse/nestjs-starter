@@ -1,6 +1,6 @@
 import { Controller, Get, Res } from '@nestjs/common';
 import { Response } from 'express';
-import { ServerService } from './server.service';
+import { ServerService } from '@/module/server/server.service';
 
 @Controller()
 export class ServerController {
