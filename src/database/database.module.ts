@@ -1,8 +1,6 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import path from 'path';
-import { config } from 'dotenv';
-config({ path: path.join(process.cwd(), '.env') });
 
 @Module({
   imports: [
