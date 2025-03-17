@@ -1,14 +1,8 @@
-// import { Session } from '../../../session/domain/session';
+import { Session } from '@/module/session/entities/session.entity';
 
 export type JwtRefreshPayloadType = {
-  sessionId: any['id'];
-  hash: any['hash'];
+  sessionId: Session['id'];
+  hash: Session['hash'];
   iat: number;
   exp: number;
 };
-// export type JwtRefreshPayloadType = {
-//   sessionId: Session['id'];
-//   hash: Session['hash'];
-//   iat: number;
-//   exp: number;
-// };

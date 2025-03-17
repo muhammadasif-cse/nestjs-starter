@@ -1,4 +1,7 @@
+import { AuthProvidersEnum } from '@/module/auth/enums/auth-providers.enum';
 import { lowerCaseTransformer } from '@/utils/transformers/lower-case.transformer';
+import { ApiProperty } from '@nestjs/swagger';
+import { Transform } from 'class-transformer';
 import {
   IsEmail,
   IsEnum,
@@ -7,9 +10,6 @@ import {
   Matches,
   MinLength,
 } from 'class-validator';
-import { ApiProperty } from '@nestjs/swagger';
-import { Transform } from 'class-transformer';
-import { AuthProvidersEnum } from '@/module/auth/enums/auth-providers.enum';
 
 export class CreateUserDto {
   @ApiProperty({ example: 'muhammadasif.cse@gmail.com', type: String })
@@ -48,7 +48,7 @@ export class CreateUserDto {
   @IsEnum(AuthProvidersEnum)
   @IsNotEmpty()
   @IsString()
-  provider: AuthProvidersEnum;1
+  provider: AuthProvidersEnum;
 
   @ApiProperty()
   @IsString()
