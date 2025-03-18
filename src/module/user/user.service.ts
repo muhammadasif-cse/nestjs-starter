@@ -1,3 +1,10 @@
+import {
+  EXISTS,
+  NOT_EXIST,
+  NOT_FOUND,
+  SUCCESS,
+} from '@/common/constant/message.constant';
+import { ActionEnum } from '@/common/enum/action.enum';
 import { buildPagination } from '@/utils/pagination.utils';
 import { APIResponse } from '@/utils/types/api-response';
 import {
@@ -44,7 +51,7 @@ export class UserService {
           throw new UnprocessableEntityException({
             statusCode: HttpStatus.UNPROCESSABLE_ENTITY,
             success: false,
-            message: 'Email already exists',
+            message: EXISTS('Email'),
             error: 'email_already_exists',
             timestamp: new Date().toISOString(),
             locale: 'en-US',
@@ -62,7 +69,7 @@ export class UserService {
           throw new UnprocessableEntityException({
             statusCode: HttpStatus.UNPROCESSABLE_ENTITY,
             success: false,
-            message: 'Image not found',
+            message: NOT_FOUND('Image'),
             error: 'image_not_found',
             timestamp: new Date().toISOString(),
             locale: 'en-US',
@@ -82,7 +89,7 @@ export class UserService {
           throw new UnprocessableEntityException({
             statusCode: HttpStatus.UNPROCESSABLE_ENTITY,
             success: false,
-            message: 'Role does not exist',
+            message: NOT_EXIST('Role'),
             error: 'role_not_exists',
             timestamp: new Date().toISOString(),
             locale: 'en-US',
@@ -100,7 +107,7 @@ export class UserService {
           throw new UnprocessableEntityException({
             statusCode: HttpStatus.UNPROCESSABLE_ENTITY,
             success: false,
-            message: 'Status does not exist',
+            message: NOT_EXIST('Status'),
             error: 'status_not_exists',
             timestamp: new Date().toISOString(),
             locale: 'en-US',
@@ -126,7 +133,7 @@ export class UserService {
       return {
         statusCode: HttpStatus.CREATED,
         success: true,
-        message: 'User created successfully',
+        message: SUCCESS(ActionEnum.CREATE, 'User'),
         data: user,
         timestamp: new Date().toISOString(),
         locale: 'en-US',
@@ -161,7 +168,7 @@ export class UserService {
       throw new NotFoundException({
         statusCode: HttpStatus.NOT_FOUND,
         success: false,
-        message: 'No users found',
+        message: NOT_FOUND('User'),
         error: 'not_found',
         timestamp: new Date().toISOString(),
         locale: 'en-US',
@@ -171,7 +178,7 @@ export class UserService {
     return {
       statusCode: HttpStatus.OK,
       success: true,
-      message: 'Users retrieved successfully',
+      message: SUCCESS(ActionEnum.GET, 'Users'),
       data: users,
       pagination: buildPagination(
         total,
@@ -196,7 +203,7 @@ export class UserService {
       throw new NotFoundException({
         statusCode: HttpStatus.NOT_FOUND,
         success: false,
-        message: 'User not found',
+        message: NOT_FOUND('User'),
         error: 'not_found',
         timestamp: new Date().toISOString(),
         locale: 'en-US',
@@ -206,7 +213,32 @@ export class UserService {
     return {
       statusCode: HttpStatus.OK,
       success: true,
-      message: 'User retrieved successfully',
+      message: SUCCESS(ActionEnum.GET, 'User'),
+      data: user,
+      timestamp: new Date().toISOString(),
+      locale: 'en-US',
+    };
+  }
+
+  async findByEmail(email: string): Promise<APIResponse<UserEntity>> {
+    const user = await this.dataSource.manager.findOne(UserEntity, {
+      where: { email },
+    });
+
+    if (!user) {
+      throw new NotFoundException({
+        statusCode: HttpStatus.NOT_FOUND,
+        success: false,
+        message: NOT_FOUND('User'),
+        error: 'not_found',
+        timestamp: new Date().toISOString(),
+        locale: 'en-US',
+      });
+    }
+    return {
+      statusCode: HttpStatus.OK,
+      success: true,
+      message: SUCCESS(ActionEnum.GET, 'User'),
       data: user,
       timestamp: new Date().toISOString(),
       locale: 'en-US',
@@ -229,7 +261,7 @@ export class UserService {
         throw new NotFoundException({
           statusCode: HttpStatus.NOT_FOUND,
           success: false,
-          message: 'User not found',
+          message: NOT_FOUND('User'),
           error: 'notFound',
           timestamp: new Date().toISOString(),
           locale: 'en-US',
@@ -244,7 +276,7 @@ export class UserService {
           throw new UnprocessableEntityException({
             statusCode: HttpStatus.UNPROCESSABLE_ENTITY,
             success: false,
-            message: 'Image not found',
+            message: NOT_FOUND('Image'),
             error: 'imageNotExists',
             timestamp: new Date().toISOString(),
             locale: 'en-US',
@@ -259,7 +291,7 @@ export class UserService {
       return {
         statusCode: HttpStatus.OK,
         success: true,
-        message: 'User updated successfully',
+        message: SUCCESS(ActionEnum.UPDATE, 'User'),
         data: user,
         timestamp: new Date().toISOString(),
         locale: 'en-US',
@@ -280,7 +312,7 @@ export class UserService {
       throw new NotFoundException({
         statusCode: HttpStatus.NOT_FOUND,
         success: false,
-        message: 'User not found',
+        message: NOT_FOUND('User'),
         error: 'notFound',
         timestamp: new Date().toISOString(),
         locale: 'en-US',
@@ -292,7 +324,7 @@ export class UserService {
     return {
       statusCode: HttpStatus.OK,
       success: true,
-      message: 'User deleted successfully',
+      message: SUCCESS(ActionEnum.DELETE, 'User'),
       timestamp: new Date().toISOString(),
       locale: 'en-US',
     };

@@ -1,3 +1,4 @@
+import { UserEntity } from '@/module/user/entities/user.entity';
 import { ApiProperty } from '@nestjs/swagger';
 import { IsNotEmpty, IsNumber, IsString } from 'class-validator';
 
@@ -17,8 +18,8 @@ export class LoginResponseDto {
   @IsNotEmpty()
   tokenExpires: number;
 
-  // @ApiProperty({
-  //   type: () => User,
-  // })
-  // user: User;
+  @ApiProperty({
+    type: () => UserEntity,
+  })
+  user: UserEntity;
 }

@@ -11,14 +11,21 @@ import {
   Patch,
   Post,
   Query,
+  UseGuards,
 } from '@nestjs/common';
+import { AuthGuard } from '@nestjs/passport';
 import { ApiOperation } from '@nestjs/swagger';
+import { RoleEnum } from '../role/enum/role.enum';
+import { Role } from '../role/role.decorator';
+import { RoleGuard } from '../role/role.guard';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UserEntity } from './entities/user.entity';
 import { UserService } from './user.service';
 
 @Controller('users')
+@Role(RoleEnum.admin)
+@UseGuards(AuthGuard('jwt'), RoleGuard)
 export class UserController {
   constructor(private readonly userService: UserService) {}
 

@@ -1,8 +1,4 @@
-import {
-  NOT_FOUND,
-  NOT_FOUND_ERROR,
-  SUCCESS,
-} from '@/common/constant/message.constant';
+import { NOT_FOUND, SUCCESS } from '@/common/constant/message.constant';
 import { ActionEnum } from '@/common/enum/action.enum';
 import { APIResponse } from '@/utils/types/api-response';
 import { HttpStatus, Injectable } from '@nestjs/common';
@@ -49,7 +45,7 @@ export class FileService {
     return {
       statusCode: HttpStatus.CREATED,
       success: true,
-      message: SUCCESS(ActionEnum.CREATE, 'file'),
+      message: SUCCESS(ActionEnum.CREATE, 'File'),
       data: newFile,
       timestamp: new Date().toISOString(),
       locale: 'en-US',
@@ -89,8 +85,8 @@ export class FileService {
       return {
         statusCode: HttpStatus.NOT_FOUND,
         success: false,
-        message: NOT_FOUND('file'),
-        error: NOT_FOUND_ERROR('file'),
+        message: NOT_FOUND('File'),
+        error: 'not_found',
         timestamp: new Date().toISOString(),
         locale: 'en-US',
       };
@@ -99,7 +95,7 @@ export class FileService {
     return {
       statusCode: HttpStatus.OK,
       success: true,
-      message: SUCCESS(ActionEnum.GET, 'file'),
+      message: SUCCESS(ActionEnum.GET, 'File'),
       data: file,
       timestamp: new Date().toISOString(),
       locale: 'en-US',
@@ -116,8 +112,8 @@ export class FileService {
       return {
         statusCode: HttpStatus.NOT_FOUND,
         success: false,
-        message: NOT_FOUND('file'),
-        error: NOT_FOUND_ERROR('file'),
+        message: NOT_FOUND('File'),
+        error: 'not_found',
         timestamp: new Date().toISOString(),
         locale: 'en-US',
       };
@@ -180,7 +176,7 @@ export class FileService {
     return {
       statusCode: HttpStatus.OK,
       success: true,
-      message: SUCCESS(ActionEnum.UPDATE, 'file'),
+      message: SUCCESS(ActionEnum.UPDATE, 'File'),
       data: data,
       timestamp: new Date().toISOString(),
       locale: 'en-US',
@@ -194,8 +190,8 @@ export class FileService {
       return {
         statusCode: HttpStatus.NOT_FOUND,
         success: false,
-        message: NOT_FOUND('file'),
-        error: NOT_FOUND_ERROR('file'),
+        message: NOT_FOUND('File'),
+        error: 'not_found',
         timestamp: new Date().toISOString(),
         locale: 'en-US',
       };
@@ -241,7 +237,7 @@ export class FileService {
     return {
       statusCode: HttpStatus.OK,
       success: true,
-      message: SUCCESS(ActionEnum.DELETE, 'file'),
+      message: SUCCESS(ActionEnum.DELETE, 'File'),
       timestamp: new Date().toISOString(),
       locale: 'en-US',
     };

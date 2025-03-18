@@ -15,6 +15,15 @@
     * pnpm run start:prod
 
 
+** Database Problem Solutions:
+- Create new database: CREATE DATABASE databaseName;
+- Delete database: DROP DATABASE databaseName;
+
+- Duplicate Key Problem Solution: 
+    1. SHOW INDEXES FROM users;
+    2. DROP INDEX IDX_97672ac88f789774dd47f7c8be ON users;
+
+
 Batter Comments:
 
 methods:

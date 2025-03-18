@@ -1,21 +1,31 @@
 import { ActionEnum } from '../enum/action.enum';
 
 export const NOT_FOUND = (name: string) =>
-  `We couldn't find the ${name} you're looking for. Please ensure the details are correct.`;
-export const NOT_FOUND_ERROR = (name: string) =>
-  `The requested ${name} does not exist in our records. Please double-check and try again.`;
+  `${name} not found. Please verify the details and try again.`;
+
+export const EXISTS = (name: string) =>
+  `${name} already exists. Please choose a different one.`;
+
+export const NOT_EXIST = (name: string) =>
+  `${name} does not exist. Please double-check the information and try again.`;
+
+export const INVALID = (name: string) =>
+  `${name} is invalid. Please correct it and try again.`;
+
+export const REQUIRED = (name: string) =>
+  `${name} is required. Please provide it.`;
 
 export const SUCCESS = (action: ActionEnum, name: string) => {
   switch (action) {
     case ActionEnum.GET:
-      return `Your ${name} has been successfully retrieved.`;
+      return `${name} has been successfully retrieved.`;
     case ActionEnum.CREATE:
-      return `Your ${name} has been successfully created.`;
+      return `${name} has been successfully created.`;
     case ActionEnum.UPDATE:
-      return `Your ${name} has been successfully updated.`;
+      return `${name} has been successfully updated.`;
     case ActionEnum.DELETE:
-      return `Your ${name} has been successfully deleted.`;
+      return `${name} has been successfully deleted.`;
     default:
-      return `The operation on ${name} was successfully completed.`;
+      return `${name} has been successfully processed.`;
   }
 };
