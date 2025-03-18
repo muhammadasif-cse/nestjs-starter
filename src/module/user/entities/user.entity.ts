@@ -1,12 +1,16 @@
 import { AuthProvidersEnum } from '@/module/auth/enums/auth-providers.enum';
+import { FileEntity } from '@/module/file/entities/file.entity';
 import { RoleEntity } from '@/module/role/entities/role.entity';
+import { StatusEntity } from '@/module/status/entities/status.entity';
 import {
   Column,
   CreateDateColumn,
   DeleteDateColumn,
   Entity,
   Index,
+  JoinColumn,
   ManyToOne,
+  OneToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
@@ -34,8 +38,15 @@ export class UserEntity {
   @Column({ type: String })
   providerId: string;
 
+  @OneToOne(() => FileEntity, { eager: true })
+  @JoinColumn()
+  photo?: FileEntity | null;
+
   @ManyToOne(() => RoleEntity, { eager: true })
   role?: RoleEntity | null;
+
+  @ManyToOne(() => StatusEntity, { eager: true })
+  status?: StatusEntity | null;
 
   @CreateDateColumn()
   createdAt: Date;

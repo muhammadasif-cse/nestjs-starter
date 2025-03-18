@@ -1,11 +1,15 @@
 import { AuthProvidersEnum } from '@/module/auth/enums/auth-providers.enum';
+import { FileDto } from '@/module/file/dto/file.dto';
+import { RoleDto } from '@/module/role/dto/role.dto';
+import { StatusDto } from '@/module/status/dto/status.dto';
 import { lowerCaseTransformer } from '@/utils/transformers/lower-case.transformer';
-import { ApiProperty } from '@nestjs/swagger';
-import { Transform } from 'class-transformer';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { Transform, Type } from 'class-transformer';
 import {
   IsEmail,
   IsEnum,
   IsNotEmpty,
+  IsOptional,
   IsString,
   Matches,
   MinLength,
@@ -54,4 +58,18 @@ export class CreateUserDto {
   @IsString()
   @IsNotEmpty()
   providerId: string;
+
+  @ApiPropertyOptional({ type: () => FileDto })
+  @IsOptional()
+  photo?: FileDto | null;
+
+  @ApiPropertyOptional({ type: () => RoleDto })
+  @IsOptional()
+  @Type(() => RoleDto)
+  role?: RoleDto | null;
+
+  @ApiPropertyOptional({ type: () => StatusDto })
+  @IsOptional()
+  @Type(() => StatusDto)
+  status?: StatusDto;
 }

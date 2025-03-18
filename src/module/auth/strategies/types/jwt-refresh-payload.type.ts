@@ -1,8 +1,8 @@
-import { Session } from '@/module/session/entities/session.entity';
+import { SessionEntity } from '@/module/session/entities/session.entity';
 
 export type JwtRefreshPayloadType = {
-  sessionId: Session['id'];
-  hash: Session['hash'];
+  sessionId: SessionEntity['id'];
+  hash: SessionEntity['hash'];
   iat: number;
   exp: number;
 };
