@@ -1,13 +1,9 @@
-import { UserEntity } from '@/module/user/entities/user.entity';
 import { ApiProperty } from '@nestjs/swagger';
-import { IsOptional } from 'class-validator';
+import { IsOptional, IsString } from 'class-validator';
 
 export class UpdateSessionDto {
-  @ApiProperty({ description: 'User associated with the session' })
+  @ApiProperty({ description: 'Hash of the session', required: false })
   @IsOptional()
-  user?: UserEntity;
-
-  @ApiProperty({ description: 'Hash of the session' })
-  @IsOptional()
+  @IsString()
   hash?: string;
 }

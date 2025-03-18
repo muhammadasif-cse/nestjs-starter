@@ -1,10 +1,8 @@
 import { UserEntity } from '@/module/user/entities/user.entity';
 import { ApiProperty } from '@nestjs/swagger';
-import { IsUUID } from 'class-validator';
 
 export class SessionDto {
   @ApiProperty({ description: 'Unique identifier of the session' })
-  @IsUUID()
   id: string;
 
   @ApiProperty({ description: 'User associated with the session' })

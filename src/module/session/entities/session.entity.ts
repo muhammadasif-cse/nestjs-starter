@@ -11,7 +11,7 @@ import {
 } from 'typeorm';
 
 @Entity({ name: 'session' })
-export class Session {
+export class SessionEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 

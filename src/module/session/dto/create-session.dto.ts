@@ -1,11 +1,11 @@
-import { UserEntity } from '@/module/user/entities/user.entity';
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty } from 'class-validator';
+import { IsNotEmpty, IsUUID } from 'class-validator';
 
 export class CreateSessionDto {
   @ApiProperty({ description: 'User associated with the session' })
   @IsNotEmpty()
-  user: UserEntity;
+  @IsUUID()
+  userId: string;
 
   @ApiProperty({ description: 'Hash of the session' })
   @IsNotEmpty()
