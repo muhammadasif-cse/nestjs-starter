@@ -35,8 +35,8 @@ export class UserEntity {
   provider: string;
 
   @Index()
-  @Column({ type: String })
-  providerId: string;
+  @Column({ type: Number })
+  providerId: number;
 
   @OneToOne(() => FileEntity, { eager: true })
   @JoinColumn()

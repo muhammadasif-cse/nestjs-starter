@@ -9,6 +9,7 @@ import {
   IsEmail,
   IsEnum,
   IsNotEmpty,
+  IsNumber,
   IsOptional,
   IsString,
   Matches,
@@ -55,9 +56,9 @@ export class CreateUserDto {
   provider: AuthProvidersEnum;
 
   @ApiProperty()
-  @IsString()
+  @IsNumber()
   @IsNotEmpty()
-  providerId: string;
+  providerId: number;
 
   @ApiPropertyOptional({ type: () => FileDto })
   @IsOptional()

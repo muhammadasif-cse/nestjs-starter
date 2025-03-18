@@ -1,12 +1,13 @@
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
-@Entity({
-  name: 'status',
-})
+@Entity('statuses')
 export class StatusEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column()
-  name?: string;
+  @Column({ unique: true })
+  name: string;
+
+  @Column({ nullable: true })
+  description: string;
 }
