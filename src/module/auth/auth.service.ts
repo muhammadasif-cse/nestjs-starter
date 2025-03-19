@@ -14,10 +14,10 @@ import {
   UnprocessableEntityException,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { InjectDataSource } from '@nestjs/typeorm';
+// import { InjectDataSource } from '@nestjs/typeorm';
 import * as bcrypt from 'bcryptjs';
 import * as crypto from 'crypto';
-import { DataSource } from 'typeorm';
+// import { DataSource } from 'typeorm';
 import { RoleEnum } from '../role/enum/role.enum';
 import { SessionEntity } from '../session/entities/session.entity';
 import { SessionService } from '../session/session.service';
@@ -28,6 +28,7 @@ import { EmailLoginDto } from './dto/email-login.dto';
 import { LoginResponseDto } from './dto/login-response.dto';
 import { RegisterLoginDto } from './dto/register-login.dto';
 import { AuthProvidersEnum } from './enums/auth-providers.enum';
+
 @Injectable()
 export class AuthService {
   constructor(
@@ -35,8 +36,8 @@ export class AuthService {
     private userService: UserService,
     private sessionService: SessionService,
     private mailService: MailService,
-    @InjectDataSource()
-    private dataSource: DataSource,
+    // @InjectDataSource()
+    // private dataSource: DataSource,
   ) {}
 
   async validateLogin(loginDto: EmailLoginDto): Promise<LoginResponseDto> {
@@ -149,7 +150,8 @@ export class AuthService {
     await this.mailService.userSignUp({
       to: registerDto.email,
       data: {
-        hash,
+        name: registerDto.name,
+        hash: hash,
       },
     });
 

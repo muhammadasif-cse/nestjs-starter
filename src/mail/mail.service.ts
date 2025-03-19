@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import path from 'path';
 import { MailData } from './interfaces/mail-data.interface';
 import { MailerService } from './mailer/mailer.service';
+import * as process from 'node:process';
 
 @Injectable()
 export class MailService {
@@ -20,12 +21,15 @@ export class MailService {
     };
   }
 
-  async userSignUp(mailData: MailData<{ hash: string }>): Promise<void> {
-    const emailConfirmTitle = 'Email Confirmation';
+  async userSignUp(
+    mailData: MailData<{ hash: string; name: string }>,
+  ): Promise<void> {
+    const emailConfirmTitle = 'Confirm Your Email Address';
     const texts = [
-      'Thank you for registering with us.',
-      'Please confirm your email address by clicking the link below:',
-      'If you did not create an account, no further action is required.',
+      `Dear ${mailData.data.name},`,
+      `Thank you for registering with ${process.env.APP_NAME}. To complete your registration and activate your account, please confirm your email address by clicking the link below`,
+      'If you did not create an account with us, please disregard this email.',
+      `If you have any questions or need further assistance, feel free to reach out to our support team at ${process.env.MAIL_COMPANY_SUPPORT}.`,
     ];
 
     const url = new URL(`${process.env.APP_FRONTEND_DOMAIN}/confirm-email`);
@@ -38,7 +42,7 @@ export class MailService {
       templatePath: path.join(
         process.cwd(),
         'src',
-        'mail',
+        'templates',
         'mail-templates',
         'activation.hbs',
       ),
@@ -47,14 +51,14 @@ export class MailService {
   }
 
   async forgotPassword(
-    mailData: MailData<{ hash: string; tokenExpires: number }>,
+    mailData: MailData<{ hash: string; name: string; tokenExpires: number }>,
   ): Promise<void> {
     const resetPasswordTitle = 'Password Reset Request';
     const texts = [
-      'You have requested to reset your password.',
-      'Please click the link below to reset your password:',
-      'If you did not request a password reset, no further action is required.',
-      'The link will expire in 24 hours for security reasons.',
+      `Dear ${mailData.data.name},`,
+      `We received a request to reset the password for your account at ${process.env.APP_NAME}. If you made this request, please click the link below to reset your password`,
+      'If you did not request a password reset, please ignore this email, and your password will remain unchanged.',
+      `If you need further assistance, feel free to contact our support team at ${process.env.MAIL_COMPANY_SUPPORT}.`,
     ];
 
     const url = new URL(`${process.env.APP_FRONTEND_DOMAIN}/password-change`);
@@ -68,7 +72,7 @@ export class MailService {
       templatePath: path.join(
         process.cwd(),
         'src',
-        'mail',
+        'templates',
         'mail-templates',
         'reset-password.hbs',
       ),
@@ -80,12 +84,15 @@ export class MailService {
     });
   }
 
-  async confirmNewEmail(mailData: MailData<{ hash: string }>): Promise<void> {
+  async confirmNewEmail(
+    mailData: MailData<{ hash: string; name: string }>,
+  ): Promise<void> {
     const emailConfirmTitle = 'Confirm Your New Email Address';
     const texts = [
-      'You have requested to change your email address.',
-      'Please confirm your new email address by clicking the link below:',
-      'If you did not request this change, no further action is required.',
+      `Dear ${mailData.data.name},`,
+      `We received a request to change the email address associated with your account at ${process.env.APP_NAME}. To confirm this change, please click the link below`,
+      'If you did not request this change, please ignore this email, and your email address will remain unchanged.',
+      `If you need any assistance or have any questions, please contact our support team at ${process.env.MAIL_COMPANY_SUPPORT}.`,
     ];
 
     const url = new URL(`${process.env.APP_FRONTEND_DOMAIN}/confirm-new-email`);
@@ -98,7 +105,7 @@ export class MailService {
       templatePath: path.join(
         process.cwd(),
         'src',
-        'mail',
+        'templates',
         'mail-templates',
         'confirm-new-email.hbs',
       ),
