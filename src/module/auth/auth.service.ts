@@ -1,6 +1,13 @@
-import { NOT_FOUND, REQUIRED } from '@/common/constant/message.constant';
+import {
+  NOT_FOUND,
+  REQUIRED,
+  SUCCESS,
+} from '@/common/constant/message.constant';
+import { ActionEnum } from '@/common/enum/action.enum';
+import { MailService } from '@/mail/mail.service';
 import ms from '@/utils/ms';
 import { retrieveData } from '@/utils/retrieve-data';
+import { APIResponse } from '@/utils/types/api-response';
 import {
   HttpStatus,
   Injectable,
@@ -11,12 +18,15 @@ import { InjectDataSource } from '@nestjs/typeorm';
 import * as bcrypt from 'bcryptjs';
 import * as crypto from 'crypto';
 import { DataSource } from 'typeorm';
+import { RoleEnum } from '../role/enum/role.enum';
 import { SessionEntity } from '../session/entities/session.entity';
 import { SessionService } from '../session/session.service';
+import { StatusEnum } from '../status/enum/status.enum';
 import { UserEntity } from '../user/entities/user.entity';
 import { UserService } from '../user/user.service';
 import { EmailLoginDto } from './dto/email-login.dto';
 import { LoginResponseDto } from './dto/login-response.dto';
+import { RegisterLoginDto } from './dto/register-login.dto';
 import { AuthProvidersEnum } from './enums/auth-providers.enum';
 @Injectable()
 export class AuthService {
@@ -24,7 +34,7 @@ export class AuthService {
     private jwtService: JwtService,
     private userService: UserService,
     private sessionService: SessionService,
-    // private mailService: MailService,
+    private mailService: MailService,
     @InjectDataSource()
     private dataSource: DataSource,
   ) {}
@@ -107,6 +117,52 @@ export class AuthService {
       user: userData,
     };
   }
+
+  async register(
+    registerDto: RegisterLoginDto,
+  ): Promise<APIResponse<UserEntity>> {
+    const registerInfo = {
+      ...registerDto,
+      role: {
+        id: RoleEnum.user,
+      },
+      status: {
+        id: StatusEnum.inactive,
+      },
+      provider: AuthProvidersEnum.email,
+      providerId: 1,
+    };
+
+    const user = await this.userService.create(registerInfo);
+    const userData = retrieveData<UserEntity>(user);
+
+    const hash = await this.jwtService.signAsync(
+      {
+        confirmEmailUserId: userData.id,
+      },
+      {
+        secret: process.env.AUTH_CONFIRM_EMAIL_SECRET,
+        expiresIn: process.env.AUTH_CONFIRM_EMAIL_TOKEN_EXPIRES_IN,
+      },
+    );
+
+    await this.mailService.userSignUp({
+      to: registerDto.email,
+      data: {
+        hash,
+      },
+    });
+
+    return {
+      statusCode: HttpStatus.CREATED,
+      success: true,
+      message: SUCCESS(ActionEnum.DEFAULT, 'Registration'),
+      data: userData,
+      timestamp: new Date().toISOString(),
+      locale: 'en-US',
+    };
+  }
+
   private async getTokensData(data: {
     id: UserEntity['id'];
     role: UserEntity['role'];

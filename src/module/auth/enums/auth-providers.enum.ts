@@ -1,6 +1,6 @@
 export enum AuthProvidersEnum {
-  email = 'email',
-  facebook = 'facebook',
-  google = 'google',
-  apple = 'apple',
+  email = 'email', // 1
+  facebook = 'facebook', // facebook register id
+  google = 'google', // google register id
+  apple = 'apple', // apple register id
 }

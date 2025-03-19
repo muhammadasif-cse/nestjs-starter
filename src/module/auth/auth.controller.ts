@@ -10,9 +10,11 @@ import {
   SerializeOptions,
 } from '@nestjs/common';
 import { ApiOkResponse, ApiTags } from '@nestjs/swagger';
+import { UserEntity } from '../user/entities/user.entity';
 import { AuthService } from './auth.service';
 import { EmailLoginDto } from './dto/email-login.dto';
 import { LoginResponseDto } from './dto/login-response.dto';
+import { RegisterLoginDto } from './dto/register-login.dto';
 
 @ApiTags('Auth')
 @Controller({
@@ -45,24 +47,17 @@ export class AuthController {
     };
   }
 
-  // @Post('email/register')
-  // @ApiOkResponse({
-  //   description: 'Registration successful',
-  // })
-  // @HttpCode(HttpStatus.CREATED)
-  // public async register(
-  //   @Body() createUserDto: RegisterLoginDto,
-  // ): Promise<APIResponse<UserEntity>> {
-  //   const user = await this.service.register(createUserDto);
-  //   return {
-  //     statusCode: HttpStatus.CREATED,
-  //     success: true,
-  //     message: 'Registration successful',
-  //     data: user,
-  //     timestamp: new Date().toISOString(),
-  //     locale: 'en-US',
-  //   };
-  // }
+  @Post('email/register')
+  @ApiOkResponse({
+    description: 'Registration successful',
+  })
+  @HttpCode(HttpStatus.CREATED)
+  public async register(
+    @Body() createUserDto: RegisterLoginDto,
+  ): Promise<APIResponse<UserEntity>> {
+    const user = await this.service.register(createUserDto);
+    return user;
+  }
 
   // @Post('email/confirm')
   // @ApiOkResponse({
