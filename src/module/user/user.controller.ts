@@ -46,12 +46,11 @@ export class UserController {
     @Query('search') search?: string,
   ): Promise<APIResponse<UserEntity[]>> {
     const sortOptions = sort ? JSON.parse(sort) : [];
-    const filters = { search };
 
     const response = await this.userService.findAll(
       { page: Number(page), limit: Number(limit) },
       sortOptions,
-      filters,
+      { search },
     );
 
     response.links = buildLinks(

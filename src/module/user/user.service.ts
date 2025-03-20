@@ -13,26 +13,29 @@ import {
   NotFoundException,
   UnprocessableEntityException,
 } from '@nestjs/common';
-import { InjectDataSource } from '@nestjs/typeorm';
+import { InjectRepository } from '@nestjs/typeorm';
 import * as bcrypt from 'bcryptjs';
-import { DataSource } from 'typeorm';
+import { Repository } from 'typeorm';
 import { FileService } from '../file/file.service';
 import { RoleEnum } from '../role/enum/role.enum';
 import { StatusEnum } from '../status/enum/status.enum';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UserEntity } from './entities/user.entity';
+import { QueryHelperService } from '@/common/services/query-helper/query-helper.service';
 
 @Injectable()
 export class UserService {
   constructor(
-    @InjectDataSource()
-    private readonly dataSource: DataSource,
+    @InjectRepository(UserEntity)
+    private readonly userRepository: Repository<UserEntity>,
+    private readonly queryHelperService: QueryHelperService,
     private readonly fileService: FileService,
   ) {}
 
   async create(createUserDto: CreateUserDto): Promise<APIResponse<UserEntity>> {
-    const queryRunner = this.dataSource.createQueryRunner();
+    const queryRunner =
+      this.userRepository.manager.connection.createQueryRunner();
     await queryRunner.connect();
     await queryRunner.startTransaction();
 
@@ -44,7 +47,7 @@ export class UserService {
 
       let email: string | undefined = undefined;
       if (createUserDto.email) {
-        const userObject = await queryRunner.manager.findOne(UserEntity, {
+        const userObject = await this.userRepository.findOne({
           where: { email: createUserDto.email },
         });
         if (userObject) {
@@ -116,7 +119,7 @@ export class UserService {
         status = { id: createUserDto.status.id };
       }
 
-      const user = queryRunner.manager.create(UserEntity, {
+      const user = this.userRepository.create({
         name: createUserDto.name,
         email: email,
         password: password,
@@ -127,7 +130,7 @@ export class UserService {
         providerId: createUserDto.providerId ?? null,
       });
 
-      await queryRunner.manager.save(UserEntity, user);
+      await this.userRepository.save(user);
       await queryRunner.commitTransaction();
 
       return {
@@ -149,21 +152,32 @@ export class UserService {
   async findAll(
     paginationOptions: { page: number; limit: number },
     sortOptions?: { field: string; order: 'asc' | 'desc' }[],
-    filters?: any,
+    filters?: { search?: string },
   ): Promise<APIResponse<UserEntity[]>> {
-    const [users, total] = await this.dataSource.manager.findAndCount(
-      UserEntity,
+    const { search } = filters || {};
+
+    // Create a query builder using userRepository
+    const queryBuilder = this.userRepository.createQueryBuilder('user');
+
+    // Apply pagination, search, and sorting
+    this.queryHelperService.applyPaginationAndSearch(
+      queryBuilder,
       {
-        skip: (paginationOptions.page - 1) * paginationOptions.limit,
-        take: paginationOptions.limit,
-        order: sortOptions?.reduce((acc, sort) => {
-          acc[sort.field] = sort.order;
-          return acc;
-        }, {}),
-        where: filters,
+        page: paginationOptions.page,
+        limit: paginationOptions.limit,
+        sort: sortOptions?.[0]
+          ? `${sortOptions[0].field}:${sortOptions[0].order}`
+          : undefined,
+        search,
       },
+      ['user.name', 'user.email'],
+      search,
     );
 
+    // Execute the query
+    const [users, total] = await queryBuilder.getManyAndCount();
+
+    // Throw an error if no users are found
     if (users.length === 0) {
       throw new NotFoundException({
         statusCode: HttpStatus.NOT_FOUND,
@@ -175,6 +189,7 @@ export class UserService {
       });
     }
 
+    // Build the response
     return {
       statusCode: HttpStatus.OK,
       success: true,
@@ -186,18 +201,17 @@ export class UserService {
         paginationOptions.limit,
         sortOptions?.[0]?.field,
         sortOptions?.[0]?.order,
-        filters?.search,
+        search,
         filters,
       ),
+      links: {},
       timestamp: new Date().toISOString(),
       locale: 'en-US',
     };
   }
 
   async findById(id: string): Promise<APIResponse<UserEntity>> {
-    const user = await this.dataSource.manager.findOne(UserEntity, {
-      where: { id },
-    });
+    const user = await this.userRepository.findOne({ where: { id } });
 
     if (!user) {
       throw new NotFoundException({
@@ -221,9 +235,7 @@ export class UserService {
   }
 
   async findByEmail(email: string): Promise<APIResponse<UserEntity>> {
-    const user = await this.dataSource.manager.findOne(UserEntity, {
-      where: { email },
-    });
+    const user = await this.userRepository.findOne({ where: { email } });
 
     if (!user) {
       throw new NotFoundException({
@@ -249,14 +261,13 @@ export class UserService {
     id: string,
     updateUserDto: UpdateUserDto,
   ): Promise<APIResponse<UserEntity>> {
-    const queryRunner = this.dataSource.createQueryRunner();
+    const queryRunner =
+      this.userRepository.manager.connection.createQueryRunner();
     await queryRunner.connect();
     await queryRunner.startTransaction();
 
     try {
-      const user = await queryRunner.manager.findOne(UserEntity, {
-        where: { id },
-      });
+      const user = await this.userRepository.findOne({ where: { id } });
       if (!user) {
         throw new NotFoundException({
           statusCode: HttpStatus.NOT_FOUND,
@@ -285,7 +296,7 @@ export class UserService {
       }
 
       Object.assign(user, updateUserDto);
-      await queryRunner.manager.save(UserEntity, user);
+      await this.userRepository.save(user);
       await queryRunner.commitTransaction();
 
       return {
@@ -305,9 +316,7 @@ export class UserService {
   }
 
   async remove(id: string): Promise<APIResponse<void>> {
-    const user = await this.dataSource.manager.findOne(UserEntity, {
-      where: { id },
-    });
+    const user = await this.userRepository.findOne({ where: { id } });
     if (!user) {
       throw new NotFoundException({
         statusCode: HttpStatus.NOT_FOUND,
@@ -319,7 +328,7 @@ export class UserService {
       });
     }
 
-    await this.dataSource.manager.remove(UserEntity, user);
+    await this.userRepository.remove(user);
 
     return {
       statusCode: HttpStatus.OK,
