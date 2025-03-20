@@ -7,9 +7,16 @@ import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
 import { JwtRefreshStrategy } from './strategies/jwt-refresh.strategy';
 import { JwtStrategy } from './strategies/jwt.strategy';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { UserEntity } from '@/module/user/entities/user.entity';
 
 @Module({
-  imports: [UserModule, SessionModule, MailModule],
+  imports: [
+    TypeOrmModule.forFeature([UserEntity]),
+    UserModule,
+    SessionModule,
+    MailModule,
+  ],
   controllers: [AuthController],
   providers: [AuthService, JwtService, JwtStrategy, JwtRefreshStrategy],
   exports: [AuthService],

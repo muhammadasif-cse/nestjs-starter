@@ -25,11 +25,11 @@ export class UserEntity {
   name: string;
 
   @Index()
-  @Column({ type: String, unique: true })
-  email: string;
+  @Column({ type: String, unique: true, nullable: true })
+  email: string | undefined;
 
-  @Column({ type: String })
-  password: string;
+  @Column({ type: String, nullable: true })
+  password?: string;
 
   @Column({ default: AuthProvidersEnum.email })
   provider: string;
