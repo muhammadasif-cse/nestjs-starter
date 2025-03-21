@@ -534,7 +534,8 @@ export class AuthService {
     sessionId: SessionEntity['id'];
     hash: SessionEntity['hash'];
   }) {
-    const tokenExpiresIn = process.env.AUTH_JWT_TOKEN_EXPIRES_IN as string;
+    const tokenExpiresIn =
+      process.env.AUTH_JWT_TOKEN_EXPIRES_IN || ('1h' as string);
     const tokenExpires = Date.now() + (ms(tokenExpiresIn) || 0);
 
     const [token, refreshToken] = await Promise.all([
