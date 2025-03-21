@@ -133,11 +133,13 @@ export class UserService {
       await this.userRepository.save(user);
       await queryRunner.commitTransaction();
 
+      const { password: userPassword, ...userData } = user;
+
       return {
         statusCode: HttpStatus.CREATED,
         success: true,
         message: SUCCESS(ActionEnum.CREATE, 'User'),
-        data: user,
+        data: userData,
         timestamp: new Date().toISOString(),
         locale: 'en-US',
       };
@@ -189,6 +191,11 @@ export class UserService {
       });
     }
 
+    // remove password from user object
+    users.forEach((user) => {
+      delete user.password;
+    });
+
     // Build the response
     return {
       statusCode: HttpStatus.OK,
@@ -224,6 +231,9 @@ export class UserService {
       });
     }
 
+    // remove password from user object
+    delete user.password;
+
     return {
       statusCode: HttpStatus.OK,
       success: true,
@@ -247,6 +257,8 @@ export class UserService {
         locale: 'en-US',
       });
     }
+    // remove password from user object
+    delete user.password;
     return {
       statusCode: HttpStatus.OK,
       success: true,
@@ -299,6 +311,9 @@ export class UserService {
       await this.userRepository.save(user);
       await queryRunner.commitTransaction();
 
+      // remove password from user object
+      delete user.password;
+
       return {
         statusCode: HttpStatus.OK,
         success: true,
@@ -322,13 +337,13 @@ export class UserService {
         statusCode: HttpStatus.NOT_FOUND,
         success: false,
         message: NOT_FOUND('User'),
-        error: 'notFound',
+        error: 'not_found',
         timestamp: new Date().toISOString(),
         locale: 'en-US',
       });
     }
 
-    await this.userRepository.remove(user);
+    await this.userRepository.softDelete(id);
 
     return {
       statusCode: HttpStatus.OK,

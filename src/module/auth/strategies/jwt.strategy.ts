@@ -14,13 +14,12 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
   }
 
   async validate(payload: any) {
-    const { sessionId, id: userId } = payload;
-
+    console.log('JWT Payload:', payload);
+    const { sessionId, id: userId, role } = payload;
     const session = await this.sessionService.findActiveSession(sessionId);
     if (!session || session.userId !== userId) {
       throw new UnauthorizedException('Invalid or expired session');
     }
-
-    return { id: userId, sessionId };
+    return { id: userId, sessionId, role };
   }
 }
