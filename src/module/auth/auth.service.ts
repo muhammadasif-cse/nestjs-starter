@@ -117,11 +117,14 @@ export class AuthService {
       hash,
     });
 
+    // user data without password
+    const { password, ...userData } = user;
+
     return {
       refreshToken,
       token,
       tokenExpires,
-      user: user,
+      user: userData,
     };
   }
 

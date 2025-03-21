@@ -5,6 +5,7 @@ import {
   DeleteDateColumn,
   Entity,
   Index,
+  JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
@@ -15,9 +16,14 @@ export class SessionEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
+  @Column({ nullable: true })
+  @Index()
+  userId: string;
+
   @ManyToOne(() => UserEntity, {
     eager: true,
   })
+  @JoinColumn({ name: 'userId' })
   @Index()
   user: UserEntity;
 

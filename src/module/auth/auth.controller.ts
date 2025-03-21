@@ -160,11 +160,12 @@ export class AuthController {
     @Request() request: any,
   ): Promise<APIResponse<UserEntity | null>> {
     const user = await this.service.me(request.user);
+    const { password, ...userData } = user || {};
     return {
       statusCode: HttpStatus.OK,
       success: true,
       message: SUCCESS(ActionEnum.GET, 'User'),
-      data: user,
+      data: user ? (userData as UserEntity) : null,
       timestamp: new Date().toISOString(),
       locale: 'en-US',
     };
