@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Not, Repository } from 'typeorm';
+import { Not, Repository, IsNull } from 'typeorm';
 import { CreateSessionDto } from './dto/create-session.dto';
 import { UpdateSessionDto } from './dto/update-session.dto';
 import { SessionEntity } from './entities/session.entity';
@@ -26,6 +26,16 @@ export class SessionService {
       throw new NotFoundException(`Session with ID ${id} not found`);
     }
     return session;
+  }
+
+  async findActiveSession(id: string): Promise<SessionEntity | null> {
+    return this.sessionRepository.findOne({
+      where: {
+        id,
+        deletedAt: IsNull(), // Only active sessions
+      },
+      relations: ['user'],
+    });
   }
 
   async update(

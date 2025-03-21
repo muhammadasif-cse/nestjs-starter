@@ -1,22 +1,26 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
-import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
-import { JwtPayloadType } from './types/jwt-payload.type';
+import { PassportStrategy } from '@nestjs/passport';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { SessionService } from '../../session/session.service';
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
-  constructor() {
+  constructor(private readonly sessionService: SessionService) {
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
-      secretOrKey: process.env.AUTH_JWT_SECRET ?? '',
+      ignoreExpiration: false,
+      secretOrKey: process.env.AUTH_JWT_SECRET || '',
     });
   }
 
-  public validate(payload: JwtPayloadType): JwtPayloadType | never {
-    if (!payload.id) {
-      throw new UnauthorizedException();
+  async validate(payload: any) {
+    const { sessionId, id: userId } = payload;
+
+    const session = await this.sessionService.findActiveSession(sessionId);
+    if (!session || session.userId !== userId) {
+      throw new UnauthorizedException('Invalid or expired session');
     }
 
-    return payload;
+    return { id: userId, sessionId };
   }
 }

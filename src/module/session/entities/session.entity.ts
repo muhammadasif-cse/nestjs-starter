@@ -17,14 +17,12 @@ export class SessionEntity {
   id: string;
 
   @Column({ nullable: true })
-  @Index()
   userId: string;
 
   @ManyToOne(() => UserEntity, {
     eager: true,
   })
   @JoinColumn({ name: 'userId' })
-  @Index()
   user: UserEntity;
 
   @Column()
