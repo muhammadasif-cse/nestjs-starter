@@ -11,6 +11,7 @@ import { APIResponse } from '@/utils/types/api-response';
 import {
   HttpStatus,
   Injectable,
+  InternalServerErrorException,
   NotFoundException,
   UnauthorizedException,
   UnprocessableEntityException,
@@ -310,6 +311,8 @@ export class AuthService {
       name: 'Active',
       description: 'User is active',
     };
+    user.isVerified = true;
+
     await this.userRepository.update(user.id, user);
   }
 
@@ -352,6 +355,8 @@ export class AuthService {
     }
 
     user.email = newEmail;
+    user.isVerified = true;
+    user.isActive = true;
     user.status = {
       id: StatusEnum.active,
       name: 'Active',
@@ -454,8 +459,123 @@ export class AuthService {
       });
     }
 
-    await this.userRepository.update(userJwtPayload.id, userDto);
-    return this.userRepository.findOne({ where: { id: userJwtPayload.id } });
+    // Check if user is active
+    if (!currentUser.isActive) {
+      throw new UnprocessableEntityException({
+        statusCode: HttpStatus.UNPROCESSABLE_ENTITY,
+        success: false,
+        message: 'User account is not active',
+        error: 'user_not_active',
+        timestamp: new Date().toISOString(),
+        locale: 'en-US',
+      });
+    }
+
+    // Handle password update
+    if (userDto.password) {
+      if (!currentUser.password) {
+        const salt = await bcrypt.genSalt(10);
+        userDto.password = await bcrypt.hash(userDto.password, salt);
+      } else {
+        if (!userDto.oldPassword) {
+          throw new UnprocessableEntityException({
+            statusCode: HttpStatus.UNPROCESSABLE_ENTITY,
+            success: false,
+            message: 'Missing old password for password update',
+            error: 'missing_old_password',
+            timestamp: new Date().toISOString(),
+            locale: 'en-US',
+          });
+        }
+
+        const isValidOldPassword = await bcrypt.compare(
+          userDto.oldPassword,
+          currentUser.password,
+        );
+
+        if (!isValidOldPassword) {
+          throw new UnprocessableEntityException({
+            statusCode: HttpStatus.UNPROCESSABLE_ENTITY,
+            success: false,
+            message: 'Incorrect old password',
+            error: 'incorrect_old_password',
+            timestamp: new Date().toISOString(),
+            locale: 'en-US',
+          });
+        }
+
+        const salt = await bcrypt.genSalt(10);
+        userDto.password = await bcrypt.hash(userDto.password, salt);
+
+        await this.sessionService.deleteByUserIdWithExclude(
+          currentUser.id,
+          userJwtPayload.sessionId,
+        );
+      }
+    } else {
+      delete userDto.password;
+    }
+
+    // Handle email update
+    if (userDto.email && userDto.email !== currentUser.email) {
+      const userByEmail = await this.userRepository.findOne({
+        where: { email: userDto.email },
+      });
+
+      if (userByEmail && userByEmail.id !== currentUser.id) {
+        throw new UnprocessableEntityException({
+          statusCode: HttpStatus.UNPROCESSABLE_ENTITY,
+          success: false,
+          message: 'Email already exists',
+          error: 'email_exists',
+          timestamp: new Date().toISOString(),
+          locale: 'en-US',
+        });
+      }
+
+      const hash = await this.jwtService.signAsync(
+        {
+          confirmEmailUserId: currentUser.id,
+          newEmail: userDto.email,
+        },
+        {
+          secret: process.env.AUTH_CONFIRM_EMAIL_SECRET,
+          expiresIn: process.env.AUTH_CONFIRM_EMAIL_TOKEN_EXPIRES_IN,
+        },
+      );
+
+      await this.mailService.confirmNewEmail({
+        to: userDto.email,
+        data: {
+          hash,
+          name: userDto.name || '',
+        },
+      });
+
+      delete userDto.email;
+    }
+
+    delete userDto.oldPassword;
+
+    const updateResult = await this.userRepository.update(
+      userJwtPayload.id,
+      userDto,
+    );
+
+    if (!updateResult.affected) {
+      throw new InternalServerErrorException({
+        statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
+        success: false,
+        message: 'Failed to update user',
+        error: 'update_failed',
+        timestamp: new Date().toISOString(),
+        locale: 'en-US',
+      });
+    }
+
+    return this.userRepository.findOne({
+      where: { id: userJwtPayload.id },
+    });
   }
 
   async refreshToken(
@@ -468,7 +588,7 @@ export class AuthService {
         statusCode: HttpStatus.UNAUTHORIZED,
         success: false,
         message: 'Invalid session',
-        error: 'sessionNotFound',
+        error: 'session_not_found',
         timestamp: new Date().toISOString(),
         locale: 'en-US',
       });
@@ -479,7 +599,7 @@ export class AuthService {
         statusCode: HttpStatus.UNAUTHORIZED,
         success: false,
         message: 'Invalid refresh token',
-        error: 'invalidHash',
+        error: 'invalid_token',
         timestamp: new Date().toISOString(),
         locale: 'en-US',
       });
@@ -497,8 +617,8 @@ export class AuthService {
       throw new UnauthorizedException({
         statusCode: HttpStatus.UNAUTHORIZED,
         success: false,
-        message: 'User role not found',
-        error: 'roleNotFound',
+        message: NOT_FOUND('User Role'),
+        error: 'role_not_found',
         timestamp: new Date().toISOString(),
         locale: 'en-US',
       });

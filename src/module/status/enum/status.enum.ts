@@ -3,5 +3,4 @@ export enum StatusEnum {
   'inactive' = 2,
   'pending' = 3,
   'banned' = 4,
-  'restricted' = 5,
 }

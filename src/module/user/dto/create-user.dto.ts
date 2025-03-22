@@ -49,6 +49,24 @@ export class CreateUserDto {
   @IsNotEmpty()
   name: string;
 
+  @ApiProperty({ example: '01930248584' })
+  @IsNumber()
+  @IsNotEmpty()
+  phone: number;
+
+  @ApiPropertyOptional({ example: '123 Main Street' })
+  @IsString()
+  @IsOptional()
+  address?: string;
+
+  @ApiPropertyOptional({ example: true })
+  @IsOptional()
+  isVerified?: boolean;
+
+  @ApiPropertyOptional({ example: true })
+  @IsOptional()
+  isActive?: boolean;
+
   @ApiProperty({ example: AuthProvidersEnum.email })
   @IsEnum(AuthProvidersEnum)
   @IsNotEmpty()

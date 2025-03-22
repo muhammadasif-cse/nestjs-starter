@@ -23,14 +23,18 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UserEntity } from './entities/user.entity';
 import { QueryHelperService } from '@/common/services/query-helper/query-helper.service';
+import { JwtService } from '@nestjs/jwt';
+import { MailService } from '@/mail/mail.service';
 
 @Injectable()
 export class UserService {
   constructor(
+    private jwtService: JwtService,
     @InjectRepository(UserEntity)
     private readonly userRepository: Repository<UserEntity>,
     private readonly queryHelperService: QueryHelperService,
     private readonly fileService: FileService,
+    private mailService: MailService,
   ) {}
 
   async create(createUserDto: CreateUserDto): Promise<APIResponse<UserEntity>> {
@@ -291,6 +295,115 @@ export class UserService {
         });
       }
 
+      // Check if user is active
+      if (!user.isActive) {
+        throw new UnprocessableEntityException({
+          statusCode: HttpStatus.UNPROCESSABLE_ENTITY,
+          success: false,
+          message: 'User account is not active',
+          error: 'user_not_active',
+          timestamp: new Date().toISOString(),
+          locale: 'en-US',
+        });
+      }
+
+      // Handle password update
+      if (updateUserDto.password) {
+        if (!user.password) {
+          // First-time password setup
+          const salt = await bcrypt.genSalt(10);
+          updateUserDto.password = await bcrypt.hash(
+            updateUserDto.password,
+            salt,
+          );
+        } else {
+          // Password update with existing password
+          if (!updateUserDto.oldPassword) {
+            throw new UnprocessableEntityException({
+              statusCode: HttpStatus.UNPROCESSABLE_ENTITY,
+              success: false,
+              message: 'Missing old password for password update',
+              error: 'missing_old_password',
+              timestamp: new Date().toISOString(),
+              locale: 'en-US',
+            });
+          }
+
+          const isValidOldPassword = await bcrypt.compare(
+            updateUserDto.oldPassword,
+            user.password,
+          );
+
+          if (!isValidOldPassword) {
+            throw new UnprocessableEntityException({
+              statusCode: HttpStatus.UNPROCESSABLE_ENTITY,
+              success: false,
+              message: 'Incorrect old password',
+              error: 'incorrect_old_password',
+              timestamp: new Date().toISOString(),
+              locale: 'en-US',
+            });
+          }
+
+          const salt = await bcrypt.genSalt(10);
+          updateUserDto.password = await bcrypt.hash(
+            updateUserDto.password,
+            salt,
+          );
+        }
+      } else {
+        delete updateUserDto.password;
+      }
+
+      // Handle email update
+      if (updateUserDto.email && updateUserDto.email !== user.email) {
+        const userByEmail = await this.userRepository.findOne({
+          where: { email: updateUserDto.email },
+        });
+
+        if (userByEmail && userByEmail.id !== user.id) {
+          throw new UnprocessableEntityException({
+            statusCode: HttpStatus.UNPROCESSABLE_ENTITY,
+            success: false,
+            message: 'Email already exists',
+            error: 'email_exists',
+            timestamp: new Date().toISOString(),
+            locale: 'en-US',
+          });
+        }
+
+        const hash = await this.jwtService.signAsync(
+          {
+            confirmEmailUserId: user.id,
+            newEmail: updateUserDto.email,
+          },
+          {
+            secret: process.env.AUTH_CONFIRM_EMAIL_SECRET,
+            expiresIn: process.env.AUTH_CONFIRM_EMAIL_TOKEN_EXPIRES_IN,
+          },
+        );
+
+        await this.mailService.confirmNewEmail({
+          to: updateUserDto.email,
+          data: {
+            hash,
+            name: updateUserDto.name || '',
+          },
+        });
+
+        // user status to inactive
+        user.isActive = false;
+        user.isVerified = false
+        user.status = {
+          id: StatusEnum.inactive,
+          name: 'Inactive',
+          description: 'User is inactive',
+        };
+        user.email = updateUserDto.email;
+
+        delete updateUserDto.email;
+      }
+
       if (updateUserDto.photo?.id) {
         const fileObject = await this.fileService.findOne(
           updateUserDto.photo.id,
@@ -307,11 +420,13 @@ export class UserService {
         }
       }
 
+      delete updateUserDto.oldPassword;
+
+      // Update user with transaction
       Object.assign(user, updateUserDto);
       await this.userRepository.save(user);
       await queryRunner.commitTransaction();
 
-      // remove password from user object
       delete user.password;
 
       return {

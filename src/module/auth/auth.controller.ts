@@ -233,6 +233,8 @@ export class AuthController {
     @Body() userDto: UpdateUserDto,
   ): Promise<APIResponse<UserEntity | null>> {
     const user = await this.service.update(request.user, userDto);
+    // delete password from response
+    delete user?.password;
     return {
       statusCode: HttpStatus.OK,
       success: true,

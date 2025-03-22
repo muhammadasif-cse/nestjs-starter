@@ -6,11 +6,13 @@ import { UserEntity } from './entities/user.entity';
 import { UserController } from './user.controller';
 import { UserService } from './user.service';
 import { QueryHelperService } from '@/common/services/query-helper/query-helper.service';
+import { JwtService } from '@nestjs/jwt';
+import { MailModule } from '@/mail/mail.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([UserEntity, FileEntity])],
+  imports: [MailModule, TypeOrmModule.forFeature([UserEntity, FileEntity])],
   controllers: [UserController],
-  providers: [UserService, FileService, QueryHelperService],
-  exports: [UserService, FileService, QueryHelperService],
+  providers: [UserService, FileService, QueryHelperService, JwtService],
+  exports: [UserService],
 })
 export class UserModule {}

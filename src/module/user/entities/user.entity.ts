@@ -28,6 +28,19 @@ export class UserEntity {
   @Column({ type: String, unique: true, nullable: true })
   email: string | undefined;
 
+  @Index()
+  @Column({ type: Number, unique: true, nullable: true })
+  phone: number | undefined;
+
+  @Column({ type: String, nullable: true })
+  address: string | undefined;
+
+  @Column({ type: Boolean, default: false })
+  isVerified: boolean;
+
+  @Column({ type: Boolean, default: false })
+  isActive: boolean;
+
   @Column({ type: String, nullable: true })
   password?: string;
 
